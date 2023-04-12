@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 //import OrderModel from "../models/OrderModel.js";
 const Schema = mongoose.Schema
 const data = mongoose.model("Orders", Schema({
-  id:String,
+  id:Number,
   order:String,
   date:String,
   customer:String,
@@ -32,4 +32,15 @@ async function SaveOrder(req, res){
   }
 } 
 
-export {ShowOrder, SaveOrder}
+async function EditOrder(req, res) {
+  try {
+    let {id} = req.params
+    let item = await data.findOne({id:id})    
+    console.log(item)
+    res.json(item)
+  } catch (error) {
+    res.json(error)
+  }
+}
+
+export {ShowOrder, SaveOrder, EditOrder}

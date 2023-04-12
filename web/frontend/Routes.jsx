@@ -16,6 +16,7 @@ import { Routes as ReactRouterRoutes, Route } from "react-router-dom";
  */
 import OrderList from "./pages/OrderList";
 import OrderAdd from "./pages/OrderAdd";
+import OrderEdit from "./pages/OrderEdit";
 
 export default function Routes({ pages }) {
   const routes = useRoutes(pages);
@@ -31,6 +32,7 @@ export default function Routes({ pages }) {
       <Route path="*" element={<NotFound />} />
       <Route path="/orders" element={<OrderList/>} />
       <Route path="/orders/add" element={<OrderAdd/>} />
+      <Route path="/orders/edit/:id" element={<OrderEdit/>} />
     </ReactRouterRoutes>
   );
 }

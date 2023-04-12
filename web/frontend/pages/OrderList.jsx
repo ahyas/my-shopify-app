@@ -1,4 +1,4 @@
-import { Card, Page, Layout, TextContainer, Heading, IndexTable, Button } from "@shopify/polaris";
+import { Card, Page, Layout, TextContainer, Heading, IndexTable, useIndexResourceState } from "@shopify/polaris";
 import { TitleBar, useNavigate } from "@shopify/app-bridge-react";
 import { useEffect, useState } from "react";
 import {useAuthenticatedFetch} from "../hooks"
@@ -20,11 +20,39 @@ export default function OrderList() {
         loadData()
     },[table.length])
 
+    //const {selectedResources, handleSelectionChange, allResourcesSelected} = useIndexResourceState(table)
+
+    const handleSelected = (id, order, date, customer, total) => {
+      navigate(`/orders/edit/${id}`)
+    }
+
+    const resourceName = {
+      singular: 'order',
+      plural: 'orders',
+  };
+
+  // const bulkActions = [
+  //   {
+  //     content: 'Add tags',
+  //     onAction: () => console.log('Todo: implement bulk add tags'),
+  //   },
+  //   {
+  //     content: 'Remove tags',
+  //     onAction: () => console.log('Todo: implement bulk remove tags'),
+  //   },
+  //   {
+  //     content: 'Delete orders',
+  //     onAction: () => console.log('Todo: implement bulk delete'),
+  //   },
+  // ];
+
     const showTable = table.map(({id, order, date, customer, total},index)=>(
         <IndexTable.Row
             id={id}
             key={id}
             position={index}
+            onClick={()=>handleSelected(id, order, date, customer, total)}
+            //selected={selectedResources.includes(id)}
         >
             <IndexTable.Cell>
             {order}
@@ -34,11 +62,6 @@ export default function OrderList() {
             <IndexTable.Cell>{total}</IndexTable.Cell>
         </IndexTable.Row>
     ))
-
-    const resourceName = {
-        singular: 'order',
-        plural: 'orders',
-      };
 
   return (
     <Page>
@@ -54,16 +77,27 @@ export default function OrderList() {
           <Card sectioned>
             <Heading>Heading</Heading>
             <TextContainer>
+              <p>List order</p>
             <IndexTable
                 resourceName={resourceName}
                 itemCount={table.length}
+                // selectedItemsCount={
+                //   allResourcesSelected ? 'All' : selectedResources.length
+                // }
+                // onSelectionChange={handleSelectionChange}
                 headings={[
-                {title: 'Order'},
-                {title: 'Date'},
-                {title: 'Customer'},
-                {title: 'Total', alignment: 'end'},
+                  {title: 'Order'},
+                  {title: 'Date'},
+                  {title: 'Customer'},
+                  {title: 'Total', alignment: 'end'},
                 ]}
-                selectable={true}
+                // bulkActions={bulkActions}
+                // promotedBulkActions={[
+                //   {
+                //     content: 'Edit item',
+                //     onAction: () => navigate("/orders/edit"),
+                //   },
+                // ]}
             >
                 {showTable}
             </IndexTable>
