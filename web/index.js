@@ -6,7 +6,7 @@ import serveStatic from "serve-static";
 
 import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
-import {ShowOrder, SaveOrder, EditOrder, UpdateOrder} from "./controllers/OrderController.js";
+import {ShowOrder, SaveOrder, EditOrder, UpdateOrder, DetailOrder, DeleteOrder} from "./controllers/OrderController.js";
 import connectDB from "./ConnectDB.js";
 import "dotenv/config.js"
 import GDPRWebhookHandlers from "./gdpr.js";
@@ -63,7 +63,9 @@ app.get("/api/products/create", async (_req, res) => {
 app.get("/api/orders", ShowOrder)
 app.post("/api/orders/save", SaveOrder)
 app.put("/api/orders/:id/edit", EditOrder)
+app.get("/api/orders/:id/detail", DetailOrder)
 app.patch("/api/orders/:id/update", UpdateOrder)
+app.delete("/api/orders/:id/delete", DeleteOrder)
 
 app.use(shopify.cspHeaders());
 app.use(serveStatic(STATIC_PATH, { index: false }));

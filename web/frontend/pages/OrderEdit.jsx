@@ -64,7 +64,7 @@ export default function OrderEdit(){
       ))
       .then((data) => {
         console.log("return ",data);
-        navigate("/orders")
+        navigate(`/orders/detail/${id}`)
       }); 
     }
 
@@ -108,7 +108,7 @@ export default function OrderEdit(){
                         onChange={(e)=>resetValue({total:e})}
                     />
                     <ButtonGroup>
-                        <Button onClick={()=>navigate("/orders")}>Cancel</Button>
+                        <Button onClick={()=>navigate(`/orders/detail/${id}`)}>Cancel</Button>
                         <Button submit primary>Update</Button>
                     </ButtonGroup>
                 </FormLayout>

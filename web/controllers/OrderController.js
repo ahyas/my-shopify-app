@@ -20,6 +20,17 @@ async function ShowOrder(req, res){
     }
 } 
 
+async function DetailOrder(req, res){
+  try {
+    let {id} = req.params
+    let list = await data.find({id:id})
+    console.log(list)
+    res.json(list)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 async function SaveOrder(req, res){
   try {
       const list = req.body
@@ -53,4 +64,13 @@ async function UpdateOrder(req, res){
   }
 }
 
-export {ShowOrder, SaveOrder, EditOrder, UpdateOrder}
+async function DeleteOrder(req, res){
+  try {
+    await data.findOneAndDelete({id:req.params.id})
+    res.json({msg:"Success"})
+  } catch (error) {
+    res.json(error)
+  }
+}
+
+export {ShowOrder, SaveOrder, EditOrder, UpdateOrder, DetailOrder, DeleteOrder}

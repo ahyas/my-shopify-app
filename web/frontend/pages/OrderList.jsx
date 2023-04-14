@@ -23,7 +23,7 @@ export default function OrderList() {
     //const {selectedResources, handleSelectionChange, allResourcesSelected} = useIndexResourceState(table)
 
     const handleSelected = (id, order, date, customer, total) => {
-      navigate(`/orders/edit/${id}`)
+      navigate(`/orders/detail/${id}`)
     }
 
     const resourceName = {
