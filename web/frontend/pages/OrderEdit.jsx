@@ -44,6 +44,30 @@ export default function OrderEdit(){
       })
     }
 
+    const updateData = async () => {
+      let url = `/api/orders/${id}/update`;
+      const data = {
+          id:form.id,
+          order: form.order,
+          date: form.date,
+          customer: form.customer,
+          total: form.total
+      };
+      const method ="PATCH"
+
+      await fetch(url, {
+        method,
+        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" },
+      }).then((response) => (
+        response.json()
+      ))
+      .then((data) => {
+        console.log("return ",data);
+        navigate("/orders")
+      }); 
+    }
+
     return(
       <Page>
       <TitleBar
@@ -54,12 +78,13 @@ export default function OrderEdit(){
           <Card sectioned>
             <Heading>Heading</Heading>
             <TextContainer>
-              <Form>
+              <Form onSubmit={updateData}>
                 <FormLayout>
                     <TextField
                         label="ID"
                         value={form.id}
                         onChange={(e)=>resetValue({id:e})}
+                        readOnly
                     />
                     <TextField
                         label="Order"
@@ -84,7 +109,7 @@ export default function OrderEdit(){
                     />
                     <ButtonGroup>
                         <Button onClick={()=>navigate("/orders")}>Cancel</Button>
-                        <Button submit primary>Save</Button>
+                        <Button submit primary>Update</Button>
                     </ButtonGroup>
                 </FormLayout>
               </Form>

@@ -43,4 +43,14 @@ async function EditOrder(req, res) {
   }
 }
 
-export {ShowOrder, SaveOrder, EditOrder}
+async function UpdateOrder(req, res){
+  try {
+    let {id} = req.params
+    await data.findOneAndUpdate({id:id}, req.body)
+    res.json({msg:"Update success"})
+  } catch (error) {
+    res.json(error)
+  }
+}
+
+export {ShowOrder, SaveOrder, EditOrder, UpdateOrder}
