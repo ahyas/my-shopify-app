@@ -64,7 +64,7 @@ export default function OrderEdit(){
       ))
       .then((data) => {
         console.log("return ",data);
-        navigate(`/orders/detail/${id}`)
+        navigate(`/orders`)
       }); 
     }
 

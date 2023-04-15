@@ -1,6 +1,7 @@
 import { Card, Page, Layout, Button, ButtonGroup } from "@shopify/polaris";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { TitleBar } from "@shopify/app-bridge-react";
 import {useAuthenticatedFetch} from "../hooks"
 
 export default function OrderDetail(){
@@ -36,6 +37,12 @@ export default function OrderDetail(){
                 <p>Date : {item[0].date}</p>
                 <p>Customer : {item[0].customer}</p>
                 <p>Total : {item[0].total}</p>
+                <br></br>
+                <ButtonGroup>
+                    <Button primary onClick={()=>navigate(`/orders/edit/${id}`)}>Edit</Button>
+                    <Button destructive onClick={()=>handleDelete()}>Delete</Button>
+                    <Button onClick={()=>navigate("/orders/")}>Cancel</Button>
+                </ButtonGroup>
             </Card>
         )
     }
@@ -51,16 +58,15 @@ export default function OrderDetail(){
 
     return(
         <Page fullWidth>
+            <TitleBar
+                title="Detail order"
+            />
         <Layout>
             <Layout.Section>
             
             {showData()}
 
-            <ButtonGroup>
-                <Button primary onClick={()=>navigate(`/orders/edit/${id}`)}>Edit</Button>
-                <Button destructive onClick={()=>handleDelete()}>Delete</Button>
-                <Button onClick={()=>navigate("/orders/")}>Cancel</Button>
-            </ButtonGroup>
+            
             </Layout.Section>
         </Layout>
         </Page>

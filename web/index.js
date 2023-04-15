@@ -6,6 +6,7 @@ import serveStatic from "serve-static";
 
 import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
+import {readOrder, getOrderList} from "./ReadOrder.js";
 import {ShowOrder, SaveOrder, EditOrder, UpdateOrder, DetailOrder, DeleteOrder} from "./controllers/OrderController.js";
 import connectDB from "./ConnectDB.js";
 import "dotenv/config.js"
@@ -59,6 +60,9 @@ app.get("/api/products/create", async (_req, res) => {
   }
   res.status(status).send({ success: status === 200, error });
 });
+
+app.get("/api/test_api", readOrder)
+app.get("/api/test_api/list_order", getOrderList)
 
 app.get("/api/orders", ShowOrder)
 app.post("/api/orders/save", SaveOrder)

@@ -9,7 +9,7 @@ import {
   Heading,
   Button
 } from "@shopify/polaris";
-import { TitleBar, useNavigate } from "@shopify/app-bridge-react";
+import { TitleBar, useAuthenticatedFetch, useNavigate } from "@shopify/app-bridge-react";
 
 import { trophyImage } from "../assets";
 
@@ -17,6 +17,23 @@ import { ProductsCard } from "../components";
 
 export default function HomePage() {
   const navigate = useNavigate()
+  const fetch = useAuthenticatedFetch()
+
+  const testAPI = async () => {
+    await fetch("/api/test_api",{method:"GET", headers: { "Content-Type": "application/json" }}).then((response)=>{
+      return response.json()
+    }).then((data)=>{
+      console.log(data)
+    })
+  }
+
+  const getOrderList = async () => {
+    await fetch("/api/test_api/list_order", {method:"GET", headers:{"Content-Type": "application/json"}}).then((response)=>{
+      return response.json()
+    }).then((data)=>{
+      console.log(data)
+    })
+  }
   return (
     <Page narrowWidth>
       <TitleBar title="App name" primaryAction={null} />
@@ -52,6 +69,8 @@ export default function HomePage() {
                     UI library and components.
                   </p>
                   <Button onClick={()=>navigate("/orders")}>Order list</Button>
+                  <Button onClick={()=>testAPI()}>Count product</Button>
+                  <Button onClick={()=>getOrderList()}>Get Order List</Button>
                   <p>
                     Ready to go? Start populating your app with some sample
                     products to view and test in your store.{" "}

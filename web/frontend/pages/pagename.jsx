@@ -1,7 +1,23 @@
 import { Card, Page, Layout, TextContainer, Heading } from "@shopify/polaris";
-import { TitleBar } from "@shopify/app-bridge-react";
+import { TitleBar, useAuthenticatedFetch } from "@shopify/app-bridge-react";
+import { useEffect } from "react";
 
 export default function PageName() {
+  const fetch = useAuthenticatedFetch()
+  
+  useEffect(()=>{
+    const loadData = async () => {
+      await fetch("/admin/api/2023-04/orders.json?status=any",{method:"GET", headers: { "Content-Type": "application/json" }}).then((response)=>{
+        response.json()
+      }).then((data)=>{
+        console.log(data)
+      })
+
+      loadData()
+
+    }
+  },[])
+
   return (
     <Page>
       <TitleBar
@@ -20,7 +36,7 @@ export default function PageName() {
       <Layout>
         <Layout.Section>
           <Card sectioned>
-            <Heading>Heading</Heading>
+            <Heading>My Heading</Heading>
             <TextContainer>
               <p>Body</p>
             </TextContainer>

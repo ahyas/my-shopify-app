@@ -31,21 +31,6 @@ export default function OrderList() {
       plural: 'orders',
   };
 
-  // const bulkActions = [
-  //   {
-  //     content: 'Add tags',
-  //     onAction: () => console.log('Todo: implement bulk add tags'),
-  //   },
-  //   {
-  //     content: 'Remove tags',
-  //     onAction: () => console.log('Todo: implement bulk remove tags'),
-  //   },
-  //   {
-  //     content: 'Delete orders',
-  //     onAction: () => console.log('Todo: implement bulk delete'),
-  //   },
-  // ];
-
     const showTable = table.map(({id, order, date, customer, total},index)=>(
         <IndexTable.Row
             id={id}
@@ -81,23 +66,14 @@ export default function OrderList() {
             <IndexTable
                 resourceName={resourceName}
                 itemCount={table.length}
-                // selectedItemsCount={
-                //   allResourcesSelected ? 'All' : selectedResources.length
-                // }
-                // onSelectionChange={handleSelectionChange}
+                
                 headings={[
                   {title: 'Order'},
                   {title: 'Date'},
                   {title: 'Customer'},
                   {title: 'Total', alignment: 'end'},
                 ]}
-                // bulkActions={bulkActions}
-                // promotedBulkActions={[
-                //   {
-                //     content: 'Edit item',
-                //     onAction: () => navigate("/orders/edit"),
-                //   },
-                // ]}
+                
             >
                 {showTable}
             </IndexTable>
