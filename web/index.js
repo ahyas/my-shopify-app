@@ -8,6 +8,7 @@ import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
 import {readOrder, getOrderList} from "./ReadOrder.js";
 import {ShowOrder, SaveOrder, EditOrder, UpdateOrder, DetailOrder, DeleteOrder} from "./controllers/OrderController.js";
+import { ExpenseShow } from "./controllers/ExpenseController.js"; 
 import connectDB from "./ConnectDB.js";
 import "dotenv/config.js"
 import GDPRWebhookHandlers from "./gdpr.js";
@@ -70,6 +71,10 @@ app.put("/api/orders/:id/edit", EditOrder)
 app.get("/api/orders/:id/detail", DetailOrder)
 app.patch("/api/orders/:id/update", UpdateOrder)
 app.delete("/api/orders/:id/delete", DeleteOrder)
+
+//Start expense section
+app.get("/api/v1/expense", ExpenseShow)
+//End expense section
 
 app.use(shopify.cspHeaders());
 app.use(serveStatic(STATIC_PATH, { index: false }));
