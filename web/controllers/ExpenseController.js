@@ -11,7 +11,8 @@ const data = mongoose.model("expenses", Schema({
 const ExpenseShow = async (req, res) => {
     try {
         const result = await data.find({})
-        res.json({data:result, total:22000})
+        const total = await data.aggregate([{$group: {_id:null, sum_val:{$sum:"$value"}}}])
+        res.json({data:result, total:total})
     } catch (error) {
         res.json({msg:error})
     }   

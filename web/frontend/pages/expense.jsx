@@ -7,13 +7,14 @@ export default function Expense() {
   const navigate = useNavigate()
   const [table, setTable] = useState([])
   const [total, setTotal] = useState(0)
+
   useEffect(()=>{
     const loadData = () => {
       fetch("/api/v1/expense", {method:"GET", headers:{"Content-Type": "application/json"}}).then((response)=>{
       return response.json()
     }).then((data)=>{
-      console.log(data)
-      setTotal(data.total)
+      console.log(data.data)
+      setTotal(data.total[0].sum_val)
       setTable(data.data)
     })
   }
@@ -21,11 +22,8 @@ export default function Expense() {
   },[table.length])
 
   const showData = () => {
-    let num = 0;
     return table.map((row)=>{
-      num+=1
       let list = {
-        id:num,
         information:row.information,
         value:row.value,
       }
@@ -50,16 +48,14 @@ export default function Expense() {
             <DataTable
               columnContentTypes={[
                 'text',
-                'text',
                 'numeric',
               ]}
               headings={[
                 '',
                 '',
-                '',
               ]}
               rows={showData()}
-              totals={['', '', total]}
+              totals={['', total]}
             />
           </Card>
         </Layout.Section>
