@@ -1,8 +1,38 @@
-import { Card, Page, Layout, TextContainer, Heading } from "@shopify/polaris";
-import { TitleBar, useNavigate } from "@shopify/app-bridge-react";
+import { Card, Page, Layout, DataTable, Link } from "@shopify/polaris";
+import { TitleBar, useAuthenticatedFetch, useNavigate } from "@shopify/app-bridge-react";
+import { useEffect, useState } from "react";
 
 export default function Category(){
+    const fetch = useAuthenticatedFetch()
+    const [table, setTable] = useState([])
     const navigate = useNavigate()
+    useEffect(()=>{
+        const loadData = async () => {
+                await fetch("/api/v1/category", {method:"GET", headers:{"Content-Type": "application/json"}}).then((response)=>{
+                return response.json()
+            }).then((data)=>{
+                setTable(data.data)
+            })
+        }
+        loadData()
+    },[table.length])
+
+    const showData = () => {
+        return table.map((row)=>{
+            let list = [
+                <Link
+                    removeUnderline
+                    url="https://www.example.com"
+                    key={row._id}
+                >
+                    {row.information}
+                </Link>
+            ]
+            
+            return list
+        })
+    }
+
     return(
         <Page>
         <TitleBar
@@ -15,7 +45,7 @@ export default function Category(){
             }
             secondaryActions={[
                 {
-                    content:"Cancel",
+                    content:"Back",
                     onAction: () => navigate("/expense/add")
                 }
             ]}
@@ -23,10 +53,15 @@ export default function Category(){
         <Layout>
             <Layout.Section>
             <Card sectioned>
-                <Heading>Category list</Heading>
-                <TextContainer>
-                <p>Category list</p>
-                </TextContainer>
+                <DataTable
+                    columnContentTypes={[
+                        'text',
+                    ]}
+                    headings={[
+                        'Category',
+                    ]}
+                    rows={showData()}
+                />
             </Card>
             </Layout.Section>
         </Layout>

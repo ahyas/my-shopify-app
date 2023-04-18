@@ -13,4 +13,14 @@ const CategoryShow = async (req, res) => {
     }
 }
 
-export {CategoryShow}
+const CategorySave = async (req, res) => {
+    try {
+        await data.create(req.body)
+        console.log(req.body)
+        res.json({msg:"Success"})
+    } catch (error) {
+        res.json({msg:error})
+    }
+}
+
+export {CategoryShow, CategorySave}

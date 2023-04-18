@@ -1,5 +1,5 @@
 import { Card, Page, Layout, Form, FormLayout, TextField, Button, Select } from "@shopify/polaris";
-import { TitleBar, useAuthenticatedFetch, useNavigate } from "@shopify/app-bridge-react";
+import { TitleBar, useAuthenticatedFetch, useNavigate, } from "@shopify/app-bridge-react";
 import { useEffect, useState } from "react";
 
 export default function ExpenseAdd(){
@@ -27,7 +27,7 @@ export default function ExpenseAdd(){
             })
         }
         loadCategory()
-    },[category.length])
+    },[category])
 
     const showCategory = () => {
         return category.map((row)=>{

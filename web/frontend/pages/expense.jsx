@@ -13,13 +13,12 @@ export default function Expense() {
       fetch("/api/v1/expense", {method:"GET", headers:{"Content-Type": "application/json"}}).then((response)=>{
       return response.json()
     }).then((data)=>{
-      console.log(data.data)
       setTotal(data.total[0].sum_val)
       setTable(data.data)
     })
   }
     loadData()
-  },[table.length])
+  },[table])
 
   const showData = () => {
     return table.map((row)=>{
