@@ -7,7 +7,7 @@ export default function ExpenseAdd(){
     const fetch = useAuthenticatedFetch()
     const [category, setCategory] = useState([])
     const [form, setForm] = useState({
-            category:"0",
+            category:"",
             information:"",
             value:0,
         })
@@ -23,7 +23,6 @@ export default function ExpenseAdd(){
             await fetch("/api/v1/category",{method:"GET", headers: {"Content-Type": "application/json"}}).then((response)=>{
                 return response.json()
             }).then((data)=>{
-                console.log(data.data)
                 return setCategory(data.data)
             })
         }
@@ -40,7 +39,13 @@ export default function ExpenseAdd(){
         })
     }
 
-    showCategory()
+    const saveExpense = async () => {
+        await fetch("/api/v1/expense/save",{method:"POST", body:JSON.stringify(form), headers:{ "Content-Type": "application/json" }}).then((response)=>{
+            return response.json()
+        }).then((data)=>{
+            navigate("/expense")
+        })
+    }
 
     return(
         <Page>
@@ -62,7 +67,7 @@ export default function ExpenseAdd(){
         <Layout>
             <Layout.Section>
             <Card sectioned>
-                <Form onSubmit={()=>saveOrder()}>
+                <Form onSubmit={()=>saveExpense()}>
                 <FormLayout>
                     <Select
                         label="Category"
