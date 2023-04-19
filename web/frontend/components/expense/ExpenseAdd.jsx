@@ -1,6 +1,6 @@
-import { Card, Page, Layout, Form, FormLayout, TextField, Button, Select } from "@shopify/polaris";
+import { Card, Page, Layout, Form, FormLayout, TextField, Button, Select, DatePicker } from "@shopify/polaris";
 import { TitleBar, useAuthenticatedFetch, useNavigate, } from "@shopify/app-bridge-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export default function ExpenseAdd(){
     const navigate = useNavigate()
@@ -8,6 +8,7 @@ export default function ExpenseAdd(){
     const [category, setCategory] = useState([])
     const [form, setForm] = useState({
             category:"",
+            date:"",
             information:"",
             value:0,
         })
@@ -27,7 +28,7 @@ export default function ExpenseAdd(){
             })
         }
         loadCategory()
-    },[category])
+    },[category.length])
 
     const showCategory = () => {
         return category.map((row)=>{
@@ -38,13 +39,33 @@ export default function ExpenseAdd(){
             return options
         })
     }
-
+    
     const saveExpense = async () => {
         await fetch("/api/v1/expense/save",{method:"POST", body:JSON.stringify(form), headers:{ "Content-Type": "application/json" }}).then((response)=>{
             return response.json()
         }).then((data)=>{
+            console.log(data.msg)
             navigate("/expense")
         })
+    }
+    //show current date to display
+    let currentDate = new Date()
+    let currentMonth = currentDate.getMonth()
+    let currentYear = currentDate.getFullYear()
+
+    const [{month, year}, setDate] = useState({month: currentMonth, year: currentYear});
+
+    const handleMonthChange = useCallback((month, year) => setDate({month, year}),
+    []
+    )
+
+    const formatDate = (e) => {
+        let selectedDate = new Date(e.start)
+        let year = selectedDate.getFullYear()
+        let month = selectedDate.getMonth()+1
+        let day = selectedDate.getDate()
+        let date = year+"-"+month+"-"+day
+        resetValue({date:date})
     }
 
     return(
@@ -60,6 +81,7 @@ export default function ExpenseAdd(){
             secondaryActions={[
                 {
                     content: "Cancel",
+                    destructive:true,
                     onAction: () => navigate("/expense"),
                 },
             ]}
@@ -80,11 +102,24 @@ export default function ExpenseAdd(){
                         onChange={(e)=>resetValue({information:e})}
                         value={form.information}
                     />
+                     <DatePicker
+                        month={month}
+                        year={year}
+                        onChange={(e)=>formatDate(e)}
+                        onMonthChange={handleMonthChange }
+                        
+                    />
+                    <TextField
+                        label="Date"
+                        readOnly
+                        value={form.date}
+                    />
                     <TextField
                         label="Value"
                         type="number"
                         onChange={(e)=>resetValue({value:e})}
                         value={form.value}
+                        min={0}
                     />
                         <Button submit primary fullWidth>Save</Button>
                 </FormLayout>

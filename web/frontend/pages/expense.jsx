@@ -13,17 +13,21 @@ export default function Expense() {
       fetch("/api/v1/expense", {method:"GET", headers:{"Content-Type": "application/json"}}).then((response)=>{
       return response.json()
     }).then((data)=>{
-      setTotal(data.total[0].sum_val)
-      setTable(data.data)
+      console.log(data.data.length)
+      if(data.data.length>0){
+        setTotal(data.total[0].sum_val)
+        setTable(data.data)
+      }
     })
   }
     loadData()
-  },[table])
+  },[table.length])
 
   const showData = () => {
     return table.map((row)=>{
       let list = {
         information:row.information,
+        date:row.date,
         value:row.value,
       }
       let result = Object.values(list)
@@ -47,14 +51,16 @@ export default function Expense() {
             <DataTable
               columnContentTypes={[
                 'text',
+                'text',
                 'numeric',
               ]}
               headings={[
-                '',
-                '',
+                'Expense',
+                'Date',
+                'Value',
               ]}
               rows={showData()}
-              totals={['', total]}
+              totals={['','', total]}
             />
           </Card>
         </Layout.Section>

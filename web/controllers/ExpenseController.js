@@ -4,6 +4,7 @@ const Schema = mongoose.Schema
 const data = mongoose.model("expenses", Schema({
     id_category:mongoose.Types.ObjectId,
     information:String,
+    date:String,
     value:Number
 }, {
     timestamps: {
@@ -14,7 +15,7 @@ const data = mongoose.model("expenses", Schema({
 
 const ExpenseShow = async (req, res) => {
     try {
-        const result = await data.find({})
+        const result = await data.find({}).select({ id: 1, id_category: 1, information: 1, date:1, value:1 }).sort({updated_at:-1})
         const total = await data.aggregate([{$group: {_id:null, sum_val:{$sum:"$value"}}}])
         res.json({data:result, total:total})
     } catch (error) {
@@ -28,8 +29,10 @@ const ExpenseSave = async (req, res) => {
         await data.create({
             id_category:id,
             information:req.body.information,
+            date: req.body.date,
             value:req.body.value
         })
+        
         res.json({msg:"Success"})
     } catch (error) {
         res.json({msg:error})
