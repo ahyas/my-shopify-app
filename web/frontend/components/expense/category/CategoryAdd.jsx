@@ -22,17 +22,10 @@ export default function CategoryAdd(){
         })
     }
     return(
-        <Page>
-        <TitleBar
-
+        <Page
             title="Add Category"
-            secondaryActions={[
-                {
-                  content: "Back",
-                  onAction: () => navigate("/expense/add"),
-                },
-            ]}
-        />
+            breadcrumbs={[{content: 'Products', url: '/category'}]}
+        >
         <Layout>
             <Layout.Section>
             <Card sectioned>

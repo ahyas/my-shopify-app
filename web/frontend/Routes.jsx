@@ -18,8 +18,10 @@ import OrderList from "./pages/OrderList";
 import OrderAdd from "./pages/OrderAdd";
 import OrderEdit from "./pages/OrderEdit";
 import OrderDetail from "./pages/OrderDetail";
+
 import CategoryAdd from "./components/expense/category/CategoryAdd";
 import ExpenseAdd from "./components/expense/ExpenseAdd";
+import ExpenseView from "./components/expense/ExpenseView";
 
 export default function Routes({ pages }) {
   const routes = useRoutes(pages);
@@ -39,7 +41,8 @@ export default function Routes({ pages }) {
       <Route path="/orders/detail/:id" element={<OrderDetail/>} />
 
       <Route path="/expense/add" element={<ExpenseAdd />} />
-      <Route path="/expense/category/add" element={<CategoryAdd/>} />
+      <Route path="/expense/:id/view" element={<ExpenseView/>} />
+      <Route path="/category/add" element={<CategoryAdd/>} />
     </ReactRouterRoutes>
   );
 }

@@ -8,7 +8,7 @@ import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
 import {readOrder, getOrderList} from "./ReadOrder.js";
 import {ShowOrder, SaveOrder, EditOrder, UpdateOrder, DetailOrder, DeleteOrder} from "./controllers/OrderController.js";
-import { ExpenseShow, ExpenseSave } from "./controllers/ExpenseController.js"; 
+import { ExpenseShow, ExpenseSave, ExpenseView } from "./controllers/ExpenseController.js"; 
 import {CategoryShow, CategorySave} from "./controllers/CategoryController.js"
 import connectDB from "./ConnectDB.js";
 import "dotenv/config.js"
@@ -75,6 +75,7 @@ app.delete("/api/orders/:id/delete", DeleteOrder)
 
 app.get("/api/v1/expense", ExpenseShow)
 app.post("/api/v1/expense/save", ExpenseSave)
+app.get("/api/v1/expense/:id/view", ExpenseView)
 
 app.get("/api/v1/category", CategoryShow)
 app.post("/api/v1/category/save", CategorySave)

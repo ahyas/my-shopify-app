@@ -39,4 +39,30 @@ const ExpenseSave = async (req, res) => {
     }
 }
 
-export {ExpenseShow, ExpenseSave}
+const ExpenseView = async (req, res) => {
+    try {
+        let id = mongoose.Types.ObjectId(req.params.id);
+        let result = await data.aggregate([
+            { $match: { "_id": id } },
+            {
+                $lookup: {
+                    from:'categories',
+                    localField:'id_category',
+                    foreignField:'_id',
+                    as:'category'
+                }
+            },
+            {
+                $unwind:'$category'
+            },
+            {
+                $project:{'_id':1, 'category.information':1, 'date':1, 'id_category':1, 'information':1, 'value':1}
+            }
+        ])
+        res.json({msg:"Success", data:result})
+    } catch (error) {
+        res.json({msg:error})
+    }
+}
+
+export {ExpenseShow, ExpenseSave, ExpenseView}

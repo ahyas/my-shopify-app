@@ -1,5 +1,5 @@
 import { Card, Page, Layout, Form, FormLayout, TextField, Button, Select, DatePicker } from "@shopify/polaris";
-import { TitleBar, useAuthenticatedFetch, useNavigate, } from "@shopify/app-bridge-react";
+import { useAuthenticatedFetch, useNavigate, } from "@shopify/app-bridge-react";
 import { useCallback, useEffect, useState } from "react";
 
 export default function ExpenseAdd(){
@@ -69,23 +69,15 @@ export default function ExpenseAdd(){
     }
 
     return(
-        <Page>
-        <TitleBar
+        <Page
             title="Add Expense"
-            primaryAction={
-                {
-                    content:"Category",
-                    onAction:()=>navigate("/category")
-                }
-            }
-            secondaryActions={[
-                {
-                    content: "Cancel",
-                    destructive:true,
-                    onAction: () => navigate("/expense"),
-                },
-            ]}
-        />
+            breadcrumbs={[{content: 'Products', url: '/expense'}]}
+            subtitle="Perfect for any pet"
+            primaryAction={{
+                content:"Add Category",
+                onAction:()=>navigate("/category")}}
+        >
+        
         <Layout>
             <Layout.Section>
             <Card sectioned>

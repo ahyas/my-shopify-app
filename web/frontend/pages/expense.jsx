@@ -1,5 +1,5 @@
-import { Card, Page, Layout, DataTable, Heading } from "@shopify/polaris";
-import { TitleBar, useAuthenticatedFetch, useNavigate } from "@shopify/app-bridge-react";
+import { Card, Page, Layout, Link, Heading, IndexTable } from "@shopify/polaris";
+import { useAuthenticatedFetch, useNavigate } from "@shopify/app-bridge-react";
 import { useEffect, useState } from "react";
 
 export default function Expense() {
@@ -13,7 +13,6 @@ export default function Expense() {
       fetch("/api/v1/expense", {method:"GET", headers:{"Content-Type": "application/json"}}).then((response)=>{
       return response.json()
     }).then((data)=>{
-      console.log(data.data.length)
       if(data.data.length>0){
         setTotal(data.total[0].sum_val)
         setTable(data.data)
@@ -23,45 +22,52 @@ export default function Expense() {
     loadData()
   },[table.length])
 
-  const showData = () => {
-    return table.map((row)=>{
-      let list = {
-        information:row.information,
-        date:row.date,
-        value:row.value,
-      }
-      let result = Object.values(list)
-      return result
-    })
-  }
+  const rowMarkup = table.map(
+    (
+      {_id, information, date, value}, index
+    ) => (
+      <IndexTable.Row id={_id} key={_id} position={index}>
+        <IndexTable.Cell>
+          <Link
+              dataPrimaryLink
+              onClick={() => navigate(`/expense/${_id}/view`)}
+          >
+            {information}
+          </Link>
+        </IndexTable.Cell>
+        <IndexTable.Cell>{date}</IndexTable.Cell>
+        <IndexTable.Cell>{value}</IndexTable.Cell>
+      </IndexTable.Row>
+    ),
+  );
 
   return (
-    <Page>
-      <TitleBar
-        title="Expense"
-        primaryAction={{
-          content: "Add",
-          onAction: () => navigate("/expense/add"),
-        }}
-      />
+    <Page 
+      title="Expense"
+      subtitle="Expense list"
+      primaryAction={{
+        content: "Create Expense",
+        onAction: () => navigate("/expense/add"),
+      }}
+    >
       <Layout>
         <Layout.Section>
           <Card sectioned>
+            <Heading >Total expense {total}</Heading>
+          </Card>
+          <Card sectioned>
             <Heading>Expense list</Heading>
-            <DataTable
-              columnContentTypes={[
-                'text',
-                'text',
-                'numeric',
-              ]}
+            <IndexTable
+              itemCount={table.length}
               headings={[
-                'Expense',
-                'Date',
-                'Value',
+                {title: 'Expense'},
+                {title: 'Date'},
+                {title: 'Value'}
               ]}
-              rows={showData()}
-              totals={['','', total]}
-            />
+              selectable={true}
+            >
+              {rowMarkup}
+            </IndexTable>
           </Card>
         </Layout.Section>
       </Layout>

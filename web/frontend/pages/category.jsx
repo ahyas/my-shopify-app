@@ -34,22 +34,17 @@ export default function Category(){
     }
 
     return(
-        <Page>
-        <TitleBar
+        <Page
             title="Category list"
+            subtitle="Category list"
             primaryAction={
                 {
-                  content: "Add",
-                  onAction: () => navigate("/expense/category/add"),
+                content: "Add New",
+                onAction: () => navigate("/category/add"),
                 }
             }
-            secondaryActions={[
-                {
-                    content:"Back",
-                    onAction: () => navigate("/expense/add")
-                }
-            ]}
-        />
+            breadcrumbs={[{content: 'Products', url: '/expense/add'}]}
+        >
         <Layout>
             <Layout.Section>
             <Card sectioned>
@@ -61,6 +56,8 @@ export default function Category(){
                         'Category',
                     ]}
                     rows={showData()}
+                    hasZebraStripingOnData
+                    increasedTableDensity
                 />
             </Card>
             </Layout.Section>
