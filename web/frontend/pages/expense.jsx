@@ -15,7 +15,8 @@ export default function Expense() {
     }).then((data)=>{
       if(data.data.length>0){
         setTotal(data.total[0].sum_val)
-        setTable(data.data)
+        //setTable(data.data)
+        setTable(data.result)
       }
     })
   }
@@ -24,7 +25,7 @@ export default function Expense() {
 
   const rowMarkup = table.map(
     (
-      {_id, information, date, value}, index
+      {_id, category, information, date, value}, index
     ) => (
       <IndexTable.Row id={_id} key={_id} position={index}>
         <IndexTable.Cell>
@@ -35,6 +36,7 @@ export default function Expense() {
             {information}
           </Link>
         </IndexTable.Cell>
+        <IndexTable.Cell>{category.information}</IndexTable.Cell>
         <IndexTable.Cell>{date}</IndexTable.Cell>
         <IndexTable.Cell>{value}</IndexTable.Cell>
       </IndexTable.Row>
@@ -61,6 +63,7 @@ export default function Expense() {
               itemCount={table.length}
               headings={[
                 {title: 'Expense'},
+                {title: 'Category'},
                 {title: 'Date'},
                 {title: 'Value'}
               ]}

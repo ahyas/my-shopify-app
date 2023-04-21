@@ -16,8 +16,24 @@ const data = mongoose.model("expenses", Schema({
 const ExpenseShow = async (req, res) => {
     try {
         const result = await data.find({}).select({ id: 1, id_category: 1, information: 1, date:1, value:1 }).sort({updated_at:-1})
+        let result2 = await data.aggregate([
+            {
+                $lookup: {
+                    from:'categories',
+                    localField:'id_category',
+                    foreignField:'_id',
+                    as:'category'
+                }
+            },
+            {
+                $unwind:'$category'
+            },
+            {
+                $project:{'_id':1, 'category.information':1, 'date':1, 'id_category':1, 'information':1, 'value':1}
+            }
+        ])
         const total = await data.aggregate([{$group: {_id:null, sum_val:{$sum:"$value"}}}])
-        res.json({data:result, total:total})
+        res.json({data:result, total:total, result:result2})
     } catch (error) {
         res.json({msg:error})
     }   

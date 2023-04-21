@@ -6,29 +6,29 @@ import { useParams } from "react-router-dom"
 export default function ExpenseView(){
     const {id} = useParams()
     const fetch = useAuthenticatedFetch()
-    const [view, setView] = useState([])
+    const [view, setView] = useState({
+        date:"",
+        category:"",
+        information:"",
+        value:""
+    })
 
     useEffect(()=>{
         const loadData = async ()=> {
             await fetch(`/api/v1/expense/${id}/view`, {method:"GET", headers:{"Content-Type": "application/json"}}).then((response)=>{
                 return response.json()
             }).then((data)=>{
-                //console.log(data.data)
-                setView(data.data)
+                //console.log(data.data[0].information)
+                setView({
+                    date:data.data[0].date,
+                    category:data.data[0].category.information,
+                    information:data.data[0].information,
+                    value:data.data[0].value
+                })
             })
         }
         loadData()
     },[])
-    //console.log(view)
-    const showData = () => {
-        return view.map((data)=>{
-            return(
-                <>
-                    <p key={data._id}>{data.date}<br></br>{data.category.information}<br></br>{data.information}<br></br>{data.value}</p>
-                </>
-            )
-        })
-    }
 
     return(
         <Page
@@ -48,7 +48,10 @@ export default function ExpenseView(){
         <Layout>
             <Layout.Section>
             <Card sectioned>
-                {showData()}
+                <p><b>Date :</b> {view.date}</p>
+                <p><b>Category :</b> {view.category}</p>
+                <p><b>Expense info :</b> {view.information}</p>
+                <p><b>Value :</b> {view.value}</p>
             </Card>
             </Layout.Section>
         </Layout>
