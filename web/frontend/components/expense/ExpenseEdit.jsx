@@ -9,7 +9,6 @@ export default function ExpenseEdit(){
     const [category, setCategory] = useState([])
     const [form, setForm] = useState([{
         date:"",
-        id_category:"",
         category:"",
         information:"",
         value:""
@@ -24,11 +23,10 @@ export default function ExpenseEdit(){
             await fetch(`/api/v1/expense/${id}/edit`, {method:"PUT", headers:{"Content-Type": "application/json" }}).then((response)=>{
                 return response.json()
             }).then((data)=>{
-                console.log(data.data)
                 setDateValue({date:new Date(data.data[0].date)})
                 setForm({
                     date:data.data[0].date,
-                    id_category:data.data[0].id_category,
+                    category:data.data[0].id_category,
                     information:data.data[0].information,
                     value:data.data[0].value    
                 })
@@ -80,9 +78,28 @@ export default function ExpenseEdit(){
         resetValue({date:date})
     }
 
-    const updateExpense = () => {
-        console.log("Update")
-        navigate(`/expense`)
+    const updateExpense = async () => {
+        let url = `/api/v1/expense/${id}/update`;
+        const data = {
+            date:form.date,
+            id_category:form.category,
+            information:form.information,
+            value:form.value  
+        };
+        const method ="PATCH"
+
+        await fetch(url, {
+            method,
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" },
+        }).then((response) => (
+            response.json()
+        ))
+        .then((data) => {
+            console.log("return ",data);
+            navigate(`/expense`)
+        }); 
+        
     }
 
     return(
@@ -101,7 +118,7 @@ export default function ExpenseEdit(){
                         label="Category"
                         options={showCategory()}
                         onChange={(e)=>resetValue({category:e})}
-                        value={form.id_category}
+                        value={form.category}
                     />
                     <TextField
                         label="Information"

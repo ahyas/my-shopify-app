@@ -31,6 +31,17 @@ export default function ExpenseView(){
         loadData()
     },[])
 
+    const deleteExpense = async () => {
+        if(window.confirm("Are you sure you want to delete this?")){
+            await fetch(`/api/v1/expense/${id}/delete`, {method:"DELETE", headers:{"Content-Type": "application/json"}}).then((response)=>{
+                return response.json()
+            }).then((data)=>{
+                console.log(data)
+                return navigate("/expense")
+            })
+        }
+    }
+
     return(
         <Page
             title="View Expense"
@@ -42,7 +53,7 @@ export default function ExpenseView(){
             secondaryActions={[{
                 content:"Delete Expense",
                 destructive:true,
-                onAction:()=>console.log("delete")
+                onAction:()=>deleteExpense()
             }]}
         >
         

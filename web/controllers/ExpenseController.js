@@ -80,4 +80,24 @@ const ExpenseView = async (req, res) => {
     }
 }
 
-export {ExpenseShow, ExpenseSave, ExpenseView}
+const ExpenseUpdate = async (req, res) => {
+    try {
+        let {id} = req.params
+        await data.findByIdAndUpdate(id, req.body)
+        res.json({msg:"Success"})
+    } catch (error) {
+        res.json({msg:error})
+    }
+}
+
+const ExpenseDelete = async (req, res) => {
+    try {
+        let {id} = req.params
+        await data.findByIdAndDelete(id)
+        res.json({msg:"Success"})
+    } catch (error) {
+        res.json({msg:error})
+    }
+}
+
+export {ExpenseShow, ExpenseSave, ExpenseView, ExpenseUpdate, ExpenseDelete}
