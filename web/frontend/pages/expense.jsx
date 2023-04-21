@@ -16,7 +16,7 @@ export default function Expense() {
       if(data.data.length>0){
         setTotal(data.total[0].sum_val)
         //setTable(data.data)
-        setTable(data.result)
+        setTable(data.data)
       }
     })
   }

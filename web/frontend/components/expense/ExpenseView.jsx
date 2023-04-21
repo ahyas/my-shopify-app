@@ -1,9 +1,10 @@
 import {Card, Page, Layout} from "@shopify/polaris"
-import { useAuthenticatedFetch } from "@shopify/app-bridge-react"
+import { useAuthenticatedFetch, useNavigate } from "@shopify/app-bridge-react"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 
 export default function ExpenseView(){
+    const navigate = useNavigate()
     const {id} = useParams()
     const fetch = useAuthenticatedFetch()
     const [view, setView] = useState({
@@ -37,7 +38,7 @@ export default function ExpenseView(){
             subtitle="Perfect for any pet"
             primaryAction={{
                 content:"Edit Expense",
-                onAction:()=>console.log("Edit")}}
+                onAction:()=>navigate(`/expense/${id}/edit`)}}
             secondaryActions={[{
                 content:"Delete Expense",
                 destructive:true,

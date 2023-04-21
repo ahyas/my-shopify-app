@@ -76,6 +76,7 @@ app.delete("/api/orders/:id/delete", DeleteOrder)
 app.get("/api/v1/expense", ExpenseShow)
 app.post("/api/v1/expense/save", ExpenseSave)
 app.get("/api/v1/expense/:id/view", ExpenseView)
+app.put("/api/v1/expense/:id/edit", ExpenseView)
 
 app.get("/api/v1/category", CategoryShow)
 app.post("/api/v1/category/save", CategorySave)
