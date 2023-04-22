@@ -34,9 +34,16 @@ export default function HomePage() {
       console.log(data)
     })
   }
+
+  const getCurrency = async () => {
+    await fetch("/api/test_api/get_currency", {method:"GET", headers:{"Content-Type": "application/json"}}).then((response)=>{
+      return response.json()
+    }).then((data)=>{
+      console.log(data)
+    })
+  }
   return (
     <Page narrowWidth>
-      <TitleBar title="App name" primaryAction={null} />
       <Layout>
         <Layout.Section>
           <Card sectioned>
@@ -71,6 +78,7 @@ export default function HomePage() {
                   <Button onClick={()=>navigate("/orders")}>Order list</Button>
                   <Button onClick={()=>testAPI()}>Count product</Button>
                   <Button onClick={()=>getOrderList()}>Get Order List</Button>
+                  <Button onClick={getCurrency} >Get Currency</Button>
                   <p>
                     Ready to go? Start populating your app with some sample
                     products to view and test in your store.{" "}

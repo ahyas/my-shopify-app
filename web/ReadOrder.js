@@ -24,4 +24,16 @@ const getOrderList = async (req, res) => {
   }
 }
 
-export {readOrder, getOrderList}
+const getCurrency = async (req, res) => {
+  try {
+    const data = await shopify.api.rest.Shop.all({
+      session: res.locals.shopify.session,
+    });
+    let currency = data[0].money_format.slice(0,2)
+    res.json(currency)
+  } catch (error) {
+    res.json(error)   
+  }
+}
+
+export {readOrder, getOrderList, getCurrency}

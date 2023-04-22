@@ -1,12 +1,14 @@
 import { Card, Page, Layout, Link, Heading, IndexTable } from "@shopify/polaris";
 import { useAuthenticatedFetch, useNavigate } from "@shopify/app-bridge-react";
 import { useEffect, useState } from "react";
+import { useShopCurrency } from "../hooks"
 
 export default function Expense() {
   const fetch = useAuthenticatedFetch()
   const navigate = useNavigate()
   const [table, setTable] = useState([])
   const [total, setTotal] = useState(0)
+  const currency = useShopCurrency(fetch)
 
   useEffect(()=>{
     const loadData = () => {
@@ -38,7 +40,7 @@ export default function Expense() {
         </IndexTable.Cell>
         <IndexTable.Cell>{category.information}</IndexTable.Cell>
         <IndexTable.Cell>{date}</IndexTable.Cell>
-        <IndexTable.Cell>{value}</IndexTable.Cell>
+        <IndexTable.Cell>{currency} {value}</IndexTable.Cell>
       </IndexTable.Row>
     ),
   );
@@ -54,11 +56,10 @@ export default function Expense() {
     >
       <Layout>
         <Layout.Section>
-          <Card sectioned>
-            <Heading >Total expense {total}</Heading>
+          <Card title="Total expense" sectioned>
+            <Heading >{currency} {total}</Heading>
           </Card>
-          <Card sectioned>
-            <Heading>Expense list</Heading>
+          <Card title="Expense list" sectioned>
             <IndexTable
               itemCount={table.length}
               headings={[

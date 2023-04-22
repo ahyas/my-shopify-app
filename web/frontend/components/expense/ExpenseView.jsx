@@ -32,7 +32,7 @@ export default function ExpenseView(){
     },[])
 
     const deleteExpense = async () => {
-        if(window.confirm("Are you sure you want to delete this?")){
+        if(confirm("Are you sure you want to delete this?")){
             await fetch(`/api/v1/expense/${id}/delete`, {method:"DELETE", headers:{"Content-Type": "application/json"}}).then((response)=>{
                 return response.json()
             }).then((data)=>{
@@ -59,7 +59,7 @@ export default function ExpenseView(){
         
         <Layout>
             <Layout.Section>
-            <Card sectioned>
+            <Card title="Expense info" sectioned>
                 <p><b>Date :</b> {view.date}</p>
                 <p><b>Category :</b> {view.category}</p>
                 <p><b>Expense info :</b> {view.information}</p>
