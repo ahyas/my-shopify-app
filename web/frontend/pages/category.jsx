@@ -1,11 +1,12 @@
 import { Card, Page, Layout, DataTable, Link } from "@shopify/polaris";
-import { TitleBar, useAuthenticatedFetch, useNavigate } from "@shopify/app-bridge-react";
+import { useAuthenticatedFetch, useNavigate } from "@shopify/app-bridge-react";
 import { useEffect, useState } from "react";
 
 export default function Category(){
     const fetch = useAuthenticatedFetch()
     const [table, setTable] = useState([])
     const navigate = useNavigate()
+
     useEffect(()=>{
         const loadData = async () => {
                 await fetch("/api/v1/category", {method:"GET", headers:{"Content-Type": "application/json"}}).then((response)=>{

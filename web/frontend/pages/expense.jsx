@@ -1,49 +1,29 @@
-import { Card, Page, Layout, Link, Heading, IndexTable } from "@shopify/polaris";
-import { useAuthenticatedFetch, useNavigate } from "@shopify/app-bridge-react";
-import { useEffect, useState } from "react";
-import { useShopCurrency } from "../hooks"
+import { Card, Page, Layout, SkeletonBodyText, EmptyState } from "@shopify/polaris";
+import { useNavigate, Loading } from "@shopify/app-bridge-react";
+import { ExpenseList } from "../components"
+import { useAppQuery } from "../hooks";
 
 export default function Expense() {
-  const fetch = useAuthenticatedFetch()
   const navigate = useNavigate()
-  const [table, setTable] = useState([])
-  const [total, setTotal] = useState(0)
-  const currency = useShopCurrency(fetch)
+  const {
+    data: expense,
+    isLoading,
+    isRefetching,
+  } = useAppQuery({
+    url: "/api/v1/expense",
+  });
 
-  useEffect(()=>{
-    const loadData = () => {
-      fetch("/api/v1/expense", {method:"GET", headers:{"Content-Type": "application/json"}}).then((response)=>{
-      return response.json()
-    }).then((data)=>{
-      if(data.data.length>0){
-        setTotal(data.total[0].sum_val)
-        //setTable(data.data)
-        setTable(data.data)
-      }
-    })
-  }
-    loadData()
-  },[table.length])
-
-  const rowMarkup = table.map(
-    (
-      {_id, category, information, date, value}, index
-    ) => (
-      <IndexTable.Row id={_id} key={_id} position={index}>
-        <IndexTable.Cell>
-          <Link
-              dataPrimaryLink
-              onClick={() => navigate(`/expense/${_id}/view`)}
-          >
-            {information}
-          </Link>
-        </IndexTable.Cell>
-        <IndexTable.Cell>{category.information}</IndexTable.Cell>
-        <IndexTable.Cell>{date}</IndexTable.Cell>
-        <IndexTable.Cell>{currency} {value}</IndexTable.Cell>
-      </IndexTable.Row>
-    ),
-  );
+  const loadingMarkup = isLoading ? (
+    <Card sectioned>
+      <Loading />
+      <SkeletonBodyText />
+    </Card>
+  ) : null;
+    
+    
+  const expenseMarkup = expense?.data ? (
+      <ExpenseList expense={expense.data} total={expense.total} loading={isRefetching} />
+  ) : null;
 
   return (
     <Page 
@@ -56,23 +36,10 @@ export default function Expense() {
     >
       <Layout>
         <Layout.Section>
-          <Card title="Total expense" sectioned>
-            <Heading >{currency} {total}</Heading>
-          </Card>
-          <Card title="Expense list" sectioned>
-            <IndexTable
-              itemCount={table.length}
-              headings={[
-                {title: 'Expense'},
-                {title: 'Category'},
-                {title: 'Date'},
-                {title: 'Value'}
-              ]}
-              selectable={true}
-            >
-              {rowMarkup}
-            </IndexTable>
-          </Card>
+         
+            {loadingMarkup}
+            {expenseMarkup}
+         
         </Layout.Section>
       </Layout>
     </Page>

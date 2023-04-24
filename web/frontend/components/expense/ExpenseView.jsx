@@ -1,35 +1,43 @@
-import {Card, Page, Layout} from "@shopify/polaris"
-import { useAuthenticatedFetch, useNavigate } from "@shopify/app-bridge-react"
-import { useEffect, useState } from "react"
+import {Card, Page, Layout, SkeletonBodyText} from "@shopify/polaris"
+import { useNavigate, Loading, useAuthenticatedFetch } from "@shopify/app-bridge-react"
 import { useParams } from "react-router-dom"
+import { useAppQuery } from "../../hooks"
 
 export default function ExpenseView(){
     const navigate = useNavigate()
     const {id} = useParams()
     const fetch = useAuthenticatedFetch()
-    const [view, setView] = useState({
-        date:"",
-        category:"",
-        information:"",
-        value:""
-    })
+    
+    const {
+        data: expense,
+        isLoading,
+      } = useAppQuery({
+        url: `/api/v1/expense/${id}/view`,
+      });
 
-    useEffect(()=>{
-        const loadData = async ()=> {
-            await fetch(`/api/v1/expense/${id}/view`, {method:"GET", headers:{"Content-Type": "application/json"}}).then((response)=>{
-                return response.json()
-            }).then((data)=>{
-                //console.log(data.data[0].information)
-                setView({
-                    date:data.data[0].date,
-                    category:data.data[0].category.information,
-                    information:data.data[0].information,
-                    value:data.data[0].value
-                })
-            })
-        }
-        loadData()
-    },[])
+      const loadingMarkup = isLoading ? (
+        <Card sectioned>
+          <Loading />
+          <SkeletonBodyText />
+        </Card>
+      ) : null;
+
+      const getExpenseView = (data) => {
+        return(
+            <>
+                <Card title="Expense info" sectioned>
+                    <p><b>Date :</b> {data[0].date}</p>
+                    <p><b>Category :</b> {data[0].category.information}</p>
+                    <p><b>Expense info :</b> {data[0].information}</p>
+                    <p><b>Value :</b> {data[0].value}</p>
+                </Card>
+            </>
+        )
+      }
+    
+      const expenseView = expense ? (
+        getExpenseView(expense.data)
+      ) : null;
 
     const deleteExpense = async () => {
         if(confirm("Are you sure you want to delete this?")){
@@ -59,12 +67,8 @@ export default function ExpenseView(){
         
         <Layout>
             <Layout.Section>
-            <Card title="Expense info" sectioned>
-                <p><b>Date :</b> {view.date}</p>
-                <p><b>Category :</b> {view.category}</p>
-                <p><b>Expense info :</b> {view.information}</p>
-                <p><b>Value :</b> {view.value}</p>
-            </Card>
+                {loadingMarkup}
+                {expenseView}
             </Layout.Section>
         </Layout>
         </Page>

@@ -23,8 +23,13 @@ export default function App() {
                 {
                   label: "Expense",
                   destination: "/expense"
+                },
+                {
+                  label: "Test",
+                  destination: "/test"
                 }
               ]}
+
             />
             <Routes pages={pages} />
           </QueryProvider>

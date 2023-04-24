@@ -24,6 +24,7 @@ export default function ExpenseAdd(){
             await fetch("/api/v1/category",{method:"GET", headers: {"Content-Type": "application/json"}}).then((response)=>{
                 return response.json()
             }).then((data)=>{
+                console.log(data.data)
                 return setCategory(data.data)
             })
         }
@@ -31,13 +32,23 @@ export default function ExpenseAdd(){
     },[category.length])
 
     const showCategory = () => {
-        return category.map((row)=>{
-            const options = {
-                label:row.information,
-                value:row._id,
-            }
-            return options
-        })
+        let initialList = {
+            '_id':'0',
+            'information':"Choose category",
+        }
+        
+        if(category.length > 0){
+            let listCategory = [ initialList,...category]
+            return listCategory.map((row)=>{
+                const options = {
+                    label:row.information,
+                    value:row._id,
+                }
+                return options
+            })
+        }
+
+
     }
     
     const saveExpense = async () => {
@@ -74,7 +85,7 @@ export default function ExpenseAdd(){
             breadcrumbs={[{content: 'Products', url: '/expense'}]}
             subtitle="Perfect for any pet"
             primaryAction={{
-                content:"Add Category",
+                content:"Add New Category",
                 onAction:()=>navigate("/category")}}
         >
         

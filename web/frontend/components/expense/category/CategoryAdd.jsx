@@ -1,5 +1,5 @@
 import { Card, Page, Layout, Form, FormLayout, Button, TextField} from "@shopify/polaris";
-import { TitleBar, useAuthenticatedFetch, useNavigate } from "@shopify/app-bridge-react";
+import { useAuthenticatedFetch, useNavigate } from "@shopify/app-bridge-react";
 import { useState } from "react";
 
 export default function CategoryAdd(){

@@ -1,6 +1,8 @@
+import { useAuthenticatedFetch } from "@shopify/app-bridge-react"
 import { useEffect, useState } from "react"
 
-export const useShopCurrency = (fetch) => {
+export const useShopCurrency = () => {
+  const fetch = useAuthenticatedFetch()
     const [currency, setCurrency] = useState("")
     useEffect(()=>{
         const getCurrency = async () => {
