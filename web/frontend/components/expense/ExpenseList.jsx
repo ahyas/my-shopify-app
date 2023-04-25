@@ -11,7 +11,7 @@ export function ExpenseList({expense, total, loading}){
    
     const showTotal = () =>{ 
         if(total.length > 0){
-            return (<p>{currency} {total[0].sum_val}</p>)
+            return (<p><b>{currency} {total[0].sum_val}</b></p>)
         }else{
             return (null)
         }
@@ -38,9 +38,6 @@ export function ExpenseList({expense, total, loading}){
 
     return(
         <>
-            <Card title="Total" sectioned>
-                {showTotal()}
-            </Card>
             <Card title="Expense list" sectioned>
               <IndexTable
                 itemCount={expense.length}
@@ -54,6 +51,11 @@ export function ExpenseList({expense, total, loading}){
                 loading={loading}
               >
                 {rowMarkup}
+                <IndexTable.Cell><b>Total</b></IndexTable.Cell>
+                <IndexTable.Cell></IndexTable.Cell>
+                <IndexTable.Cell></IndexTable.Cell>
+                <IndexTable.Cell></IndexTable.Cell>
+                <IndexTable.Cell>{showTotal()}</IndexTable.Cell>
               </IndexTable>
             </Card>
         </>
