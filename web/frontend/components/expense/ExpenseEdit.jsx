@@ -1,7 +1,7 @@
-import { Card, Page, Layout, Form, FormLayout, TextField, Button, Select, DatePicker } from "@shopify/polaris";
-import { useAuthenticatedFetch, useNavigate, } from "@shopify/app-bridge-react";
+import { Card, Page, Layout, Form, FormLayout, TextField, Button, Select, DatePicker, Link } from "@shopify/polaris";
+import { useAuthenticatedFetch } from "@shopify/app-bridge-react";
 import { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 export default function ExpenseEdit(){
     const navigate = useNavigate()
@@ -119,6 +119,7 @@ export default function ExpenseEdit(){
                         options={showCategory()}
                         onChange={(e)=>resetValue({category:e})}
                         value={form.category}
+                        helpText={<Link onClick={()=>navigate(`/expense/${id}/category`)} removeUnderline>Add new category</Link>}
                     />
                     <TextField
                         label="Information"

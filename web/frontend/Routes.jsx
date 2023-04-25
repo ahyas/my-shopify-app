@@ -23,6 +23,7 @@ import CategoryAdd from "./components/expense/category/CategoryAdd";
 import ExpenseAdd from "./components/expense/ExpenseAdd";
 import ExpenseView from "./components/expense/ExpenseView";
 import ExpenseEdit from "./components/expense/ExpenseEdit";
+import Category from "./pages/category";
 
 export default function Routes({ pages }) {
   const routes = useRoutes(pages);
@@ -44,7 +45,10 @@ export default function Routes({ pages }) {
       <Route path="/expense/add" element={<ExpenseAdd />} />
       <Route path="/expense/:id/view" element={<ExpenseView/>} />
       <Route path="/expense/:id/edit" element={<ExpenseEdit/>} />
-      <Route path="/category/add" element={<CategoryAdd/>} />
+      <Route path="/expense/:id/category" element={<Category/>} />
+      <Route path="/expense/:id/category/add" element={<CategoryAdd/>} />
+      <Route path="/expense/category" element={<Category/>} />
+      <Route path="/expense/category/add" element={<CategoryAdd/>} />
     </ReactRouterRoutes>
   );
 }

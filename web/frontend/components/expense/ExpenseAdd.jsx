@@ -1,6 +1,7 @@
-import { Card, Page, Layout, Form, FormLayout, TextField, Button, Select, DatePicker } from "@shopify/polaris";
-import { useAuthenticatedFetch, useNavigate, } from "@shopify/app-bridge-react";
+import { Card, Page, Layout, Form, FormLayout, TextField, Button, Select, DatePicker, Link } from "@shopify/polaris";
+import { useAuthenticatedFetch } from "@shopify/app-bridge-react";
 import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function ExpenseAdd(){
     const navigate = useNavigate()
@@ -24,7 +25,6 @@ export default function ExpenseAdd(){
             await fetch("/api/v1/category",{method:"GET", headers: {"Content-Type": "application/json"}}).then((response)=>{
                 return response.json()
             }).then((data)=>{
-                console.log(data.data)
                 return setCategory(data.data)
             })
         }
@@ -47,7 +47,6 @@ export default function ExpenseAdd(){
                 return options
             })
         }
-
 
     }
     
@@ -84,9 +83,7 @@ export default function ExpenseAdd(){
             title="Add Expense"
             breadcrumbs={[{content: 'Products', url: '/expense'}]}
             subtitle="Perfect for any pet"
-            primaryAction={{
-                content:"Add New Category",
-                onAction:()=>navigate("/category")}}
+           
         >
         
         <Layout>
@@ -99,7 +96,9 @@ export default function ExpenseAdd(){
                         options={showCategory()}
                         onChange={(e)=>resetValue({category:e})}
                         value={form.category}
+                        helpText={<Link onClick={()=>navigate("/expense/category")} removeUnderline>Add new category</Link>}
                     />
+                    
                     <TextField
                         label="Information"
                         onChange={(e)=>resetValue({information:e})}

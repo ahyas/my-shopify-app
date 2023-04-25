@@ -1,10 +1,13 @@
 import { Card, Page, Layout, Form, FormLayout, Button, TextField} from "@shopify/polaris";
 import { useAuthenticatedFetch, useNavigate } from "@shopify/app-bridge-react";
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 
 export default function CategoryAdd(){
     const navigate = useNavigate()
     const fetch = useAuthenticatedFetch()
+    const {id} = useParams()
+    
     const [form, setForm] = useState({
         information:""
     })
@@ -17,14 +20,13 @@ export default function CategoryAdd(){
         await fetch("/api/v1/category/save", {method:"POST", body:JSON.stringify(form), headers:{"Content-Type": "application/json"}}).then((response)=>{
             return response.json()
         }).then((data)=>{
-            console.log(data.msg)
-            return navigate("/category")
+            return id ? navigate(`/expense/${id}/category`) : navigate(`/expense/category`)
         })
     }
     return(
         <Page
             title="Add Category"
-            breadcrumbs={[{content: 'Products', url: '/category'}]}
+            breadcrumbs={[{content: 'Products', onAction:()=>id ? navigate(`/expense/${id}/category`) : navigate(`/expense/category`)}]}
         >
         <Layout>
             <Layout.Section>

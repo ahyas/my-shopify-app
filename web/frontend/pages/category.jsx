@@ -1,38 +1,31 @@
-import { Card, Page, Layout, DataTable, Link } from "@shopify/polaris";
-import { useAuthenticatedFetch, useNavigate } from "@shopify/app-bridge-react";
-import { useEffect, useState } from "react";
+import { Card, Page, Layout, SkeletonBodyText } from "@shopify/polaris";
+import { Loading } from "@shopify/app-bridge-react";
+import { useAppQuery } from "../hooks";
+import { CategoryList } from "../components";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 export default function Category(){
-    const fetch = useAuthenticatedFetch()
-    const [table, setTable] = useState([])
     const navigate = useNavigate()
+    const {id} = useParams()
+   
+    const {
+        data: category,
+        isLoading,
+        isRefetching,
+      } = useAppQuery({
+        url: "/api/v1/category",
+      });
+    
+      const loadingMarkup = isLoading ? (
+        <Card sectioned>
+          <Loading />
+          <SkeletonBodyText />
+        </Card>
+      ) : null;
 
-    useEffect(()=>{
-        const loadData = async () => {
-                await fetch("/api/v1/category", {method:"GET", headers:{"Content-Type": "application/json"}}).then((response)=>{
-                return response.json()
-            }).then((data)=>{
-                setTable(data.data)
-            })
-        }
-        loadData()
-    },[table.length])
-
-    const showData = () => {
-        return table.map((row)=>{
-            let list = [
-                <Link
-                    removeUnderline
-                    url="https://www.example.com"
-                    key={row._id}
-                >
-                    {row.information}
-                </Link>
-            ]
-            
-            return list
-        })
-    }
+    const expenseMarkup = category?.data ? (
+        <CategoryList category={category.data} loading={isRefetching} />
+    ) : null;
 
     return(
         <Page
@@ -41,26 +34,15 @@ export default function Category(){
             primaryAction={
                 {
                 content: "Add New",
-                onAction: () => navigate("/category/add"),
+                onAction: () => {id ? navigate(`/expense/${id}/category/add`) : navigate("/expense/category/add")},
                 }
             }
-            breadcrumbs={[{content: 'Products', url: '/expense/add'}]}
+            breadcrumbs={[{content: 'Back', onAction:()=>{id ? navigate(`/expense/${id}/edit`) : navigate("/expense/add")}}]}
         >
         <Layout>
             <Layout.Section>
-            <Card sectioned>
-                <DataTable
-                    columnContentTypes={[
-                        'text',
-                    ]}
-                    headings={[
-                        'Category',
-                    ]}
-                    rows={showData()}
-                    hasZebraStripingOnData
-                    increasedTableDensity
-                />
-            </Card>
+            {loadingMarkup}
+            {expenseMarkup}
             </Layout.Section>
         </Layout>
         </Page>
