@@ -37,6 +37,7 @@ export default function ExpenseView(){
     
       const expenseView = expense ? (
         getExpenseView(expense.data)
+        //console.log(expense.data)
       ) : null;
 
     const deleteExpense = async () => {

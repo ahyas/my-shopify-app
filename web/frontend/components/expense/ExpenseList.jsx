@@ -50,12 +50,13 @@ export function ExpenseList({expense, total, loading}){
                 selectable={true}
                 loading={loading}
               >
-                {rowMarkup}
+                <IndexTable.Row>
                 <IndexTable.Cell><b>Total</b></IndexTable.Cell>
                 <IndexTable.Cell></IndexTable.Cell>
                 <IndexTable.Cell></IndexTable.Cell>
-                <IndexTable.Cell></IndexTable.Cell>
                 <IndexTable.Cell>{showTotal()}</IndexTable.Cell>
+                </IndexTable.Row>
+                {rowMarkup}
               </IndexTable>
             </Card>
         </>

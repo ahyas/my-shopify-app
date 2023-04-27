@@ -9,7 +9,7 @@ import productCreator from "./product-creator.js";
 import {readOrder, getOrderList, getCurrency} from "./ReadOrder.js";
 import {ShowOrder, SaveOrder, EditOrder, UpdateOrder, DetailOrder, DeleteOrder} from "./controllers/OrderController.js";
 import { ExpenseShow, ExpenseSave, ExpenseView, ExpenseUpdate, ExpenseDelete } from "./controllers/ExpenseController.js"; 
-import {CategoryShow, CategorySave} from "./controllers/CategoryController.js"
+import {CategoryShow, CategorySave, CategoryView, DeleteCategory} from "./controllers/CategoryController.js"
 import connectDB from "./ConnectDB.js";
 import "dotenv/config.js"
 import GDPRWebhookHandlers from "./gdpr.js";
@@ -83,6 +83,8 @@ app.delete("/api/v1/expense/:id/delete", ExpenseDelete)
 
 app.get("/api/v1/category", CategoryShow)
 app.post("/api/v1/category/save", CategorySave)
+app.get("/api/v1/category/:id/view", CategoryView)
+app.delete("/api/v1/category/:id/delete", DeleteCategory)
 
 app.use(shopify.cspHeaders());
 app.use(serveStatic(STATIC_PATH, { index: false }));

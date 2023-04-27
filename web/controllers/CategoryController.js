@@ -4,6 +4,8 @@ const data = mongoose.model("categories", Schema({
     information:String
 }))
 
+const expense = mongoose.model("expenses")
+
 const CategoryShow = async (req, res) => {
     try {
         const result = await data.find({})
@@ -23,4 +25,25 @@ const CategorySave = async (req, res) => {
     }
 }
 
-export {CategoryShow, CategorySave}
+const CategoryView = async (req, res) => {
+    try {
+        let result = await data.find({_id:req.params.id})
+        res.json({data:result})
+    } catch (error) {
+        res.json(error)
+    }
+}
+
+const DeleteCategory = async (req, res) => {
+    try {
+        let find = await expense.find({id_category:req.params.id}).count()
+        if(find===0){
+            await data.findByIdAndDelete({_id:req.params.id})
+        }
+        res.json({count:find})
+    } catch (error) {
+        res.json({msg:error})
+    }
+}
+
+export {CategoryShow, CategorySave, CategoryView, DeleteCategory}

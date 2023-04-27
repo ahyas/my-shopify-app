@@ -2,9 +2,12 @@ import {
     Card,
     IndexTable,
 } from "@shopify/polaris";
+import { useNavigate, useParams } from "react-router-dom";
 
 export function CategoryList({category, loading}){
-   
+    const navigate = useNavigate()
+    const {id} = useParams()
+
     const rowMarkup = category.map(
         ({ _id, information }, index) => {
           return (
@@ -13,7 +16,7 @@ export function CategoryList({category, loading}){
               key={_id}
               position={index}
               onClick={() => {
-               console.log("");
+                navigate(`/expense/${id}/category/${_id}/view`)
               }}
             >
                 <IndexTable.Cell>{information}</IndexTable.Cell>
