@@ -46,4 +46,13 @@ const DeleteCategory = async (req, res) => {
     }
 }
 
-export {CategoryShow, CategorySave, CategoryView, DeleteCategory}
+const UpdateCategory = async(req, res)=>{
+    try {
+        await data.findByIdAndUpdate(req.params.id, {information:req.body.information})
+        res.json({msg:"Success"})
+    } catch (error) {
+        res.json(error)
+    }
+}
+
+export {CategoryShow, CategorySave, CategoryView, DeleteCategory, UpdateCategory}

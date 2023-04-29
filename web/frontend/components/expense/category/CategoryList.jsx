@@ -16,7 +16,7 @@ export function CategoryList({category, loading}){
               key={_id}
               position={index}
               onClick={() => {
-                navigate(`/expense/${id}/category/${_id}/view`)
+                typeof id !== 'undefined' ? navigate(`/expense/${id}/category/${_id}/view`) : navigate(`/expense/category/${_id}/view`)
               }}
             >
                 <IndexTable.Cell>{information}</IndexTable.Cell>

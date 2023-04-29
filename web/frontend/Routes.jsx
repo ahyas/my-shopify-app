@@ -51,6 +51,9 @@ export default function Routes({ pages }) {
       <Route path="/expense/:id/category/add" element={<CategoryAdd/>} />
       <Route path="/expense/category" element={<Category/>} />
       <Route path="/expense/category/add" element={<CategoryAdd/>} />
+      <Route path="/expense/category/:id_category/view" element={<CategoryView/>} />
+      
+      <Route path="/expense/category/:id_category/edit" element={<CategoryEdit/>} />
       <Route path="/expense/:id/category/:id_category/view" element={<CategoryView/>} />
       <Route path="/expense/:id/category/:id_category/edit" element={<CategoryEdit/>} />
     </ReactRouterRoutes>

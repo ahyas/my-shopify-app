@@ -55,11 +55,11 @@ export function CategoryView(){
     return(
         <Page
             title="View Category"
-            breadcrumbs={[{content: 'Back', url: `/expense/${id}/category`}]}
+            breadcrumbs={[{content: 'Back', url: typeof id ===! 'undefined' ? `/expense/${id}/category` : `/expense/category`}]}
             subtitle="Perfect for any pet"
             primaryAction={{
                 content:"Edit Category",
-                onAction:()=>navigate(`/expense/${id}/edit`)}}
+                onAction:()=> typeof id !== 'undefined' ? navigate(`/expense/${id}/category/${id_category}/edit`) : navigate(`/expense/category/${id_category}/edit`)}}
             secondaryActions={[{
                 content:"Delete Category",
                 destructive:true,

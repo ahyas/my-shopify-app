@@ -9,7 +9,7 @@ import productCreator from "./product-creator.js";
 import {readOrder, getOrderList, getCurrency} from "./ReadOrder.js";
 import {ShowOrder, SaveOrder, EditOrder, UpdateOrder, DetailOrder, DeleteOrder} from "./controllers/OrderController.js";
 import { ExpenseShow, ExpenseSave, ExpenseView, ExpenseUpdate, ExpenseDelete } from "./controllers/ExpenseController.js"; 
-import {CategoryShow, CategorySave, CategoryView, DeleteCategory} from "./controllers/CategoryController.js"
+import {CategoryShow, CategorySave, CategoryView, DeleteCategory, UpdateCategory} from "./controllers/CategoryController.js"
 import connectDB from "./ConnectDB.js";
 import "dotenv/config.js"
 import GDPRWebhookHandlers from "./gdpr.js";
@@ -77,7 +77,6 @@ app.delete("/api/orders/:id/delete", DeleteOrder)
 app.get("/api/v1/expense", ExpenseShow)
 app.post("/api/v1/expense/save", ExpenseSave)
 app.get("/api/v1/expense/:id/view", ExpenseView)
-app.put("/api/v1/expense/:id/edit", ExpenseView)
 app.patch("/api/v1/expense/:id/update", ExpenseUpdate)
 app.delete("/api/v1/expense/:id/delete", ExpenseDelete)
 
@@ -85,6 +84,7 @@ app.get("/api/v1/category", CategoryShow)
 app.post("/api/v1/category/save", CategorySave)
 app.get("/api/v1/category/:id/view", CategoryView)
 app.delete("/api/v1/category/:id/delete", DeleteCategory)
+app.patch("/api/v1/category/:id/update", UpdateCategory)
 
 app.use(shopify.cspHeaders());
 app.use(serveStatic(STATIC_PATH, { index: false }));

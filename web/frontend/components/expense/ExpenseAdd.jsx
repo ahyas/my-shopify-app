@@ -1,12 +1,12 @@
 import { Card, Page, Layout, Form, FormLayout, TextField, Button, Select, DatePicker, Link } from "@shopify/polaris";
 import { useAuthenticatedFetch } from "@shopify/app-bridge-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAppQuery } from "../../hooks";
 
 export default function ExpenseAdd(){
     const navigate = useNavigate()
     const fetch = useAuthenticatedFetch()
-    const [category, setCategory] = useState([])
     const [form, setForm] = useState({
             category:"",
             date:"",
@@ -20,35 +20,20 @@ export default function ExpenseAdd(){
         })
     }    
 
-    useEffect(()=>{
-        const loadCategory = async () => {
-            await fetch("/api/v1/category",{method:"GET", headers: {"Content-Type": "application/json"}}).then((response)=>{
-                return response.json()
-            }).then((data)=>{
-                return setCategory(data.data)
-            })
-        }
-        loadCategory()
-    },[category.length])
-
-    const showCategory = () => {
-        let initialList = {
-            '_id':'0',
-            'information':"Choose category",
-        }
-        
-        if(category.length > 0){
-            let listCategory = [ initialList,...category]
-            return listCategory.map((row)=>{
-                const options = {
-                    label:row.information,
-                    value:row._id,
-                }
-                return options
-            })
-        }
-
-    }
+    const {data:category, isLoading:loadingCategory} = useAppQuery({url:`/api/v1/category`})
+    
+    const category_option =  category?.data ? 
+        [{
+            label:"Choose Category",
+            value:0,
+        },...category.data.map((row)=>{
+            const options = {
+                label:row.information,
+                value:row._id,
+            }
+            return options
+        })]
+     : []
     
     const saveExpense = async () => {
         await fetch("/api/v1/expense/save",{method:"POST", body:JSON.stringify(form), headers:{ "Content-Type": "application/json" }}).then((response)=>{
@@ -83,7 +68,6 @@ export default function ExpenseAdd(){
             title="Add Expense"
             breadcrumbs={[{content: 'Products', url: '/expense'}]}
             subtitle="Perfect for any pet"
-           
         >
         
         <Layout>
@@ -93,9 +77,10 @@ export default function ExpenseAdd(){
                 <FormLayout>
                     <Select
                         label="Category"
-                        options={showCategory()}
+                        options={category_option}
                         onChange={(e)=>resetValue({category:e})}
                         value={form.category}
+                        disabled={loadingCategory}
                         helpText={<Link onClick={()=>navigate("/expense/category")} removeUnderline>Add new category</Link>}
                     />
                     

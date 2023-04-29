@@ -1,64 +1,43 @@
-import { Card, Page, Layout, Form, FormLayout, TextField, Button, Select, DatePicker, Link } from "@shopify/polaris";
+import { Card, Page, Layout, Loading, Form, FormLayout, TextField, Button, Select, DatePicker, Link } from "@shopify/polaris";
 import { useAuthenticatedFetch } from "@shopify/app-bridge-react";
 import { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useAppQuery } from "../../hooks";
 
 export default function ExpenseEdit(){
     const navigate = useNavigate()
     const fetch = useAuthenticatedFetch()
-    const [category, setCategory] = useState([])
-    const [form, setForm] = useState([{
-        date:"",
-        category:"",
-        information:"",
-        value:""
-    }])
     const {id} = useParams()
-    let currentDate = new Date()
+    
+    const {data:expense} = useAppQuery({url:`/api/v1/expense/${id}/view`})
+    
+    const [form, setForm] = useState({
+        date:expense.data[0].date,
+        category:expense?.data[0].id_category,
+        information:expense?.data[0].information,
+        value:expense?.data[0].value
+    })
+    
+    let currentDate = new Date(form.date)
     let currentMonth = currentDate.getMonth()
     let currentYear = currentDate.getFullYear()
     const [dateValue, setDateValue] = useState({date:currentDate})
-    useEffect(()=>{
-        const loadData = async () => {
-            await fetch(`/api/v1/expense/${id}/edit`, {method:"PUT", headers:{"Content-Type": "application/json" }}).then((response)=>{
-                return response.json()
-            }).then((data)=>{
-                setDateValue({date:new Date(data.data[0].date)})
-                setForm({
-                    date:data.data[0].date,
-                    category:data.data[0].id_category,
-                    information:data.data[0].information,
-                    value:data.data[0].value    
-                })
-            })
-        }
-        loadData()
-    },[form.length])
-
-    const resetValue = (current) => {
-        return setForm((prev)=>{
-            return {...prev, ...current}
-        })
-    }
-
-    useEffect(()=>{
-        const loadCategory = async () => {
-            await fetch("/api/v1/category",{method:"GET", headers: {"Content-Type": "application/json"}}).then((response)=>{
-                return response.json()
-            }).then((data)=>{
-                return setCategory(data.data)
-            })
-        }
-        loadCategory()
-    },[category.length])
-
-    const showCategory = () => {
-        return category.map((row)=>{
+    
+    const {data:category, isLoading:loadingCategory} = useAppQuery({url:`/api/v1/category`})
+    
+    const category_option =  category?.data ? 
+        category.data.map((row)=>{
             const options = {
                 label:row.information,
                 value:row._id,
             }
             return options
+        })
+     : []
+
+    const resetValue = (current) => {
+        return setForm((prev)=>{
+            return {...prev, ...current}
         })
     }
 
@@ -69,6 +48,7 @@ export default function ExpenseEdit(){
     )
 
     const formatDate = (e) => {
+        
         let selectedDate = new Date(e.start)
         let year = selectedDate.getFullYear()
         let month = selectedDate.getMonth()+1
@@ -94,8 +74,7 @@ export default function ExpenseEdit(){
             headers: { "Content-Type": "application/json" },
         }).then((response) => (
             response.json()
-        ))
-        .then((data) => {
+        )).then((data) => {
             console.log("return ",data);
             navigate(`/expense`)
         }); 
@@ -116,9 +95,10 @@ export default function ExpenseEdit(){
                 <FormLayout>
                     <Select
                         label="Category"
-                        options={showCategory()}
+                        options={category_option}
                         onChange={(e)=>resetValue({category:e})}
                         value={form.category}
+                        disabled={loadingCategory}
                         helpText={<Link onClick={()=>navigate(`/expense/${id}/category`)} removeUnderline>Add new category</Link>}
                     />
                     <TextField

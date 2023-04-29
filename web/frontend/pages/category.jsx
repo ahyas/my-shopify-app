@@ -2,12 +2,12 @@ import { Card, Page, Layout, SkeletonBodyText } from "@shopify/polaris";
 import { Loading } from "@shopify/app-bridge-react";
 import { useAppQuery } from "../hooks";
 import { CategoryList } from "../components";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function Category(){
     const navigate = useNavigate()
     const {id} = useParams()
-   
+    console.log(id)
     const {
         data: category,
         isLoading,
@@ -34,10 +34,10 @@ export default function Category(){
             primaryAction={
                 {
                 content: "Add New",
-                onAction: () => {id ? navigate(`/expense/${id}/category/add`) : navigate("/expense/category/add")},
+                onAction: () => {typeof id !== 'undefined' ? navigate(`/expense/${id}/category/add`) : navigate("/expense/category/add")},
                 }
             }
-            breadcrumbs={[{content: 'Back', onAction:()=>{id ? navigate(`/expense/${id}/edit`) : navigate("/expense/add")}}]}
+            breadcrumbs={[{content: 'Back', onAction:()=>{typeof id !== 'undefined' ? navigate(`/expense/${id}/edit`) : navigate("/expense/add")}}]}
         >
         <Layout>
             <Layout.Section>
