@@ -1,21 +1,22 @@
 import { Card, Page, Layout, Loading, Form, FormLayout, TextField, Button, Select, DatePicker, Link } from "@shopify/polaris";
 import { useAuthenticatedFetch } from "@shopify/app-bridge-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useAppQuery } from "../../hooks";
+import { useAppQuery, useShopCurrency } from "../../hooks";
 
 export default function ExpenseEdit(){
     const navigate = useNavigate()
     const fetch = useAuthenticatedFetch()
+    const currency = useShopCurrency()
     const {id} = useParams()
     
     const {data:expense} = useAppQuery({url:`/api/v1/expense/${id}/view`})
     
     const [form, setForm] = useState({
-        date:expense.data[0].date,
-        category:expense?.data[0].id_category,
-        information:expense?.data[0].information,
-        value:expense?.data[0].value
+        date:expense?.data? expense.data[0].date:null,
+        category:expense?.data? expense?.data[0].id_category : null,
+        information:expense?.data? expense?.data[0].information : null,
+        value:expense?.data? expense?.data[0].value : 0
     })
     
     let currentDate = new Date(form.date)
@@ -122,6 +123,7 @@ export default function ExpenseEdit(){
                         label="Value"
                         type="number"
                         onChange={(e)=>resetValue({value:e})}
+                        prefix={currency}
                         value={form.value}
                         min={0}
                     />

@@ -1,19 +1,6 @@
-import { useAuthenticatedFetch } from "@shopify/app-bridge-react"
-import { useEffect, useState } from "react"
+import { useAppQuery } from "./useAppQuery"
 
 export const useShopCurrency = () => {
-  const fetch = useAuthenticatedFetch()
-    const [currency, setCurrency] = useState("")
-    useEffect(()=>{
-        const getCurrency = async () => {
-          await fetch("/api/test_api/get_currency", {method:"GET", headers:{"Content-Type": "application/json"}}).then((response)=>{
-            return response.json()
-          }).then((data)=>{
-            return setCurrency(data)
-          })
-        }
-        getCurrency()
-    },[])
-
+    const {data:currency} = useAppQuery({url:`/api/test_api/get_currency`})
     return currency
 }

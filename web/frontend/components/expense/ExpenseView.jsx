@@ -1,13 +1,13 @@
 import {Card, Page, Layout, SkeletonBodyText} from "@shopify/polaris"
 import { useNavigate, Loading, useAuthenticatedFetch } from "@shopify/app-bridge-react"
 import { useParams } from "react-router-dom"
-import { useAppQuery } from "../../hooks"
+import { useAppQuery, useShopCurrency } from "../../hooks"
 
 export default function ExpenseView(){
     const navigate = useNavigate()
     const {id} = useParams()
     const fetch = useAuthenticatedFetch()
-    
+    const currency = useShopCurrency()
     const {
         data: expense,
         isLoading,
@@ -29,7 +29,7 @@ export default function ExpenseView(){
                     <p><b>Date :</b> {data[0].date}</p>
                     <p><b>Category :</b> {data[0].category.information}</p>
                     <p><b>Expense info :</b> {data[0].information}</p>
-                    <p><b>Value :</b> {data[0].value}</p>
+                    <p><b>Value :</b> {currency} {data[0].value}</p>
                 </Card>
             </>
         )

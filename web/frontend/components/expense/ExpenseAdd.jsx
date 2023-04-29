@@ -2,31 +2,77 @@ import { Card, Page, Layout, Form, FormLayout, TextField, Button, Select, DatePi
 import { useAuthenticatedFetch } from "@shopify/app-bridge-react";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppQuery } from "../../hooks";
+import { useAppQuery, useShopCurrency } from "../../hooks";
+import { useForm, useField, notEmptyString, } from "@shopify/react-form"
 
 export default function ExpenseAdd(){
     const navigate = useNavigate()
     const fetch = useAuthenticatedFetch()
-    const [form, setForm] = useState({
-            category:"",
-            date:"",
-            information:"",
-            value:0,
-        })
+    const currency = useShopCurrency()
+    let currentDate = new Date()
+    let y = currentDate.getFullYear()
+    let m = currentDate.getMonth()+1
+    let d = currentDate.getDate()
+    let a = y+"-"+m+"-"+d
 
-    const resetValue = (current) => {
-        return setForm((prev)=>{
-            return {...prev,...current}
-        })
-    }    
+    const [selectedDate, setSelectedDate] = useState(a)
 
-    const {data:category, isLoading:loadingCategory} = useAppQuery({url:`/api/v1/category`})
+    const {
+        fields:{
+            category,
+            information,
+            date,
+            value
+        },
+        submit
+    } = useForm({
+        fields: {
+            category: useField({
+                value: 0,
+                validates: (category)=>{
+                 if(category===0){
+                    return "Choose category"
+                 }   
+                },
+            }),
+            information: useField({
+                value: "",
+                validates: [notEmptyString("Please provide information detail")],
+            }),
+            date: useField(
+                {
+                    value:selectedDate,
+                    validates:[notEmptyString("Please provide information detail")]
+                }
+            ),
+            value: useField({
+                value: 0,
+                validates: (value)=>{
+                    if(value === 0 || value===""){
+                        return "Please provide information detail"
+                    }
+                },
+            })
+            },
+            onSubmit: useCallback(async(form)=>{
+                    await fetch("/api/v1/expense/save",{method:"POST", body:JSON.stringify(form), headers:{ "Content-Type": "application/json" }}).then((response)=>{
+                        return response.json()
+                    }).then((data)=>{
+                        console.log(data.msg)
+                        navigate("/expense")
+                    })
+                    return {status: 'success'};
+                },[])
+              
+        });
+
+    const {data:list_category, isLoading:loadingCategory} = useAppQuery({url:`/api/v1/category`})
     
-    const category_option =  category?.data ? 
+    const category_option =  list_category?.data ? 
         [{
             label:"Choose Category",
             value:0,
-        },...category.data.map((row)=>{
+        },...list_category.data.map((row)=>{
             const options = {
                 label:row.information,
                 value:row._id,
@@ -35,16 +81,6 @@ export default function ExpenseAdd(){
         })]
      : []
     
-    const saveExpense = async () => {
-        await fetch("/api/v1/expense/save",{method:"POST", body:JSON.stringify(form), headers:{ "Content-Type": "application/json" }}).then((response)=>{
-            return response.json()
-        }).then((data)=>{
-            console.log(data.msg)
-            navigate("/expense")
-        })
-    }
-    //show current date to display
-    let currentDate = new Date()
     let currentMonth = currentDate.getMonth()
     let currentYear = currentDate.getFullYear()
 
@@ -53,14 +89,14 @@ export default function ExpenseAdd(){
     const handleMonthChange = useCallback((month, year) => setDate({month, year}),
     []
     )
-
+    
     const formatDate = (e) => {
-        let selectedDate = new Date(e.start)
-        let year = selectedDate.getFullYear()
-        let month = selectedDate.getMonth()+1
-        let day = selectedDate.getDate()
-        let date = year+"-"+month+"-"+day
-        resetValue({date:date})
+        let create_date = new Date(e.start)
+        let y = create_date.getFullYear()
+        let m = create_date.getMonth()+1
+        let d = create_date.getDate()
+        let a = y+"-"+m+"-"+d
+        setSelectedDate(a)
     }
 
     return(
@@ -72,43 +108,45 @@ export default function ExpenseAdd(){
         
         <Layout>
             <Layout.Section>
-            <Card sectioned>
-                <Form onSubmit={()=>saveExpense()}>
+            <Card sectioned actions={[
+                {
+                    content: "Add new category",
+                    onAction:()=> navigate("/expense/category")
+                }
+            ]}>
+                <Form>
                 <FormLayout>
                     <Select
+                        {...category}
                         label="Category"
                         options={category_option}
-                        onChange={(e)=>resetValue({category:e})}
-                        value={form.category}
                         disabled={loadingCategory}
-                        helpText={<Link onClick={()=>navigate("/expense/category")} removeUnderline>Add new category</Link>}
                     />
-                    
                     <TextField
+                        {...information}
                         label="Information"
-                        onChange={(e)=>resetValue({information:e})}
-                        value={form.information}
                     />
                      <DatePicker
                         month={month}
                         year={year}
                         onChange={(e)=>formatDate(e)}
                         onMonthChange={handleMonthChange }
-                        
+                        selected={currentDate}
                     />
                     <TextField
+                        {...date}
                         label="Date"
                         readOnly
-                        value={form.date}
+                        //value={selectedDate}
                     />
                     <TextField
+                        {...value}
                         label="Value"
                         type="number"
-                        onChange={(e)=>resetValue({value:e})}
-                        value={form.value}
+                        prefix={currency}
                         min={0}
                     />
-                        <Button submit primary fullWidth>Save</Button>
+                        <Button onClick={submit} primary fullWidth>Save</Button>
                 </FormLayout>
               </Form>
             </Card>
