@@ -7,44 +7,166 @@ import {
   Stack,
   Link,
   Heading,
-  Button
+  SkeletonBodyText,
+  Badge,
+  DisplayText,
+  TextStyle,
 } from "@shopify/polaris";
-import { TitleBar, useAuthenticatedFetch, useNavigate } from "@shopify/app-bridge-react";
+
+import { useAuthenticatedFetch, useNavigate, Loading } from "@shopify/app-bridge-react";
 
 import { trophyImage } from "../assets";
-
 import { ProductsCard } from "../components";
+import { useAppQuery } from "../hooks";
 
 export default function HomePage() {
-  const navigate = useNavigate()
-  const fetch = useAuthenticatedFetch()
 
-  const testAPI = async () => {
-    await fetch("/api/test_api",{method:"GET", headers: { "Content-Type": "application/json" }}).then((response)=>{
-      return response.json()
-    }).then((data)=>{
-      console.log(data)
-    })
-  }
+const {data:sales, isLoading:salesLoading} = useAppQuery({
+    url:`/api/v1/order/get_paid_order`
+})
 
-  const getOrderList = async () => {
-    await fetch("/api/test_api/list_order", {method:"GET", headers:{"Content-Type": "application/json"}}).then((response)=>{
-      return response.json()
-    }).then((data)=>{
-      console.log(data)
-    })
-  }
+const getTotalSales = () => {
+  return sales ? (
+    <Card sectioned >
+      <Stack>
+        <Stack.Item fill>
+          <Heading>Total Sales</Heading>
+        </Stack.Item>
+        <Stack.Item>
+          <Heading>{sales.total_sales}</Heading>
+        </Stack.Item>
+      </Stack>
+      <Stack>
+        <Stack.Item fill>
+          <p>Paid Invoice</p>
+        </Stack.Item>
+        <Stack.Item>
+          <p>{sales.total_paid}</p>
+        </Stack.Item>
+      </Stack>
+      <Stack>
+        <Stack.Item fill>
+          <p>Unpaid Invoice</p>
+        </Stack.Item>
+        <Stack.Item>
+          <p>{sales.total_unpaid}</p>
+        </Stack.Item>
+      </Stack>
+    </Card>
+  ) : null
+}
 
-  const getCurrency = async () => {
-    await fetch("/api/test_api/get_currency", {method:"GET", headers:{"Content-Type": "application/json"}}).then((response)=>{
-      return response.json()
-    }).then((data)=>{
-      console.log(data)
-    })
-  }
+const loadingMarkup = salesLoading ? (
+  <Card sectioned>
+    <Loading />
+    <SkeletonBodyText />
+  </Card>
+) : null;
+
   return (
-    <Page narrowWidth>
+    <Page>
       <Layout>
+        <Layout.Section>
+          <Card sectioned>
+          <Stack>
+            <Stack.Item fill>
+              <Heading>Profit / Loss</Heading>
+            </Stack.Item>
+            <Stack.Item>
+              <Badge>Paid</Badge>
+            </Stack.Item>
+            <Stack.Item>
+              <Badge>Fulfilled</Badge>
+            </Stack.Item>
+          </Stack>
+          </Card>
+        </Layout.Section>
+
+        <Layout.Section oneHalf>
+            {loadingMarkup}
+            {getTotalSales()}
+        </Layout.Section>
+
+        <Layout.Section oneHalf>
+          <Card sectioned >
+          <Stack>
+            <Stack.Item fill>
+              <Heading>Expense</Heading>
+            </Stack.Item>
+            <Stack.Item>
+              <Badge>Paid</Badge>
+            </Stack.Item>
+            <Stack.Item>
+              <Badge>Fulfilled</Badge>
+            </Stack.Item>
+          </Stack>
+          </Card>
+        </Layout.Section>
+
+        <Layout.Section oneHalf>
+          <Card sectioned >
+          <Stack>
+            <Stack.Item fill>
+              <Heading>Payments</Heading>
+            </Stack.Item>
+            <Stack.Item>
+              <Badge>Paid</Badge>
+            </Stack.Item>
+            <Stack.Item>
+              <Badge>Fulfilled</Badge>
+            </Stack.Item>
+          </Stack>
+          </Card>
+        </Layout.Section>
+
+        <Layout.Section oneHalf>
+          <Card sectioned >
+          <Stack>
+            <Stack.Item fill>
+              <Heading>Acc. Receivable / Payable</Heading>
+            </Stack.Item>
+            <Stack.Item>
+              <Badge>Paid</Badge>
+            </Stack.Item>
+            <Stack.Item>
+              <Badge>Fulfilled</Badge>
+            </Stack.Item>
+          </Stack>
+          </Card>
+        </Layout.Section>
+
+        <Layout.Section oneHalf>
+          <Card sectioned >
+          <Stack>
+            <Stack.Item fill>
+              <Heading>Purchase</Heading>
+            </Stack.Item>
+            <Stack.Item>
+              <Badge>Paid</Badge>
+            </Stack.Item>
+            <Stack.Item>
+              <Badge>Fulfilled</Badge>
+            </Stack.Item>
+          </Stack>
+          </Card>
+        </Layout.Section>
+        
+        <Layout.Section oneHalf>
+          <Card sectioned >
+          <Stack>
+            <Stack.Item fill>
+              <Heading>Cash/Bank Fund Transfer</Heading>
+            </Stack.Item>
+            <Stack.Item>
+              <Badge>Paid</Badge>
+            </Stack.Item>
+            <Stack.Item>
+              <Badge>Fulfilled</Badge>
+            </Stack.Item>
+          </Stack>
+          </Card>
+        </Layout.Section>
+
         <Layout.Section>
           <Card sectioned>
             <Stack
@@ -75,10 +197,7 @@ export default function HomePage() {
                     </Link>{" "}
                     UI library and components.
                   </p>
-                  <Button onClick={()=>navigate("/orders")}>Order list</Button>
-                  <Button onClick={()=>testAPI()}>Count product</Button>
-                  <Button onClick={()=>getOrderList()}>Get Order List</Button>
-                  <Button onClick={getCurrency} >Get Currency</Button>
+                  
                   <p>
                     Ready to go? Start populating your app with some sample
                     products to view and test in your store.{" "}

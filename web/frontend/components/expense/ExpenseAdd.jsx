@@ -56,14 +56,13 @@ export default function ExpenseAdd(){
             },
             onSubmit: useCallback(async(form)=>{
                     await fetch("/api/v1/expense/save",{method:"POST", body:JSON.stringify(form), headers:{ "Content-Type": "application/json" }}).then((response)=>{
+                        
                         return response.json()
                     }).then((data)=>{
-                        console.log(data.msg)
                         navigate("/expense")
                     })
                     return {status: 'success'};
                 },[])
-              
         });
 
     const {data:list_category, isLoading:loadingCategory} = useAppQuery({url:`/api/v1/category`})

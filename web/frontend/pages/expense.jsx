@@ -1,4 +1,4 @@
-import { Card, Page, Layout, SkeletonBodyText, EmptyState } from "@shopify/polaris";
+import { Card, Page, Layout, SkeletonBodyText } from "@shopify/polaris";
 import { useNavigate, Loading } from "@shopify/app-bridge-react";
 import { ExpenseList } from "../components"
 import { useAppQuery } from "../hooks";

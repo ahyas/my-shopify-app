@@ -16,7 +16,8 @@ const getOrderList = async (req, res) => {
   try {
     const response = await shopify.api.rest.Order.all({
       session: res.locals.shopify.session,
-      status: "any",
+      financial_status:"paid",
+      fields: "id,line_items,name,total_price",
     });
     res.json(response)
   } catch (error) {
@@ -36,4 +37,4 @@ const getCurrency = async (req, res) => {
   }
 }
 
-export {readOrder, getOrderList, getCurrency}
+export {readOrder, getOrderList}
