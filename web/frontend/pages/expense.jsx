@@ -30,7 +30,7 @@ export default function Expense() {
       title="Expense"
       subtitle="Expense list"
       primaryAction={{
-        content: "Create Expense",
+        content: "Add Expense",
         onAction: () => navigate("/expense/add"),
       }}
     >

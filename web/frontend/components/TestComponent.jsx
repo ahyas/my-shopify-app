@@ -4,7 +4,7 @@ import {
   } from "@shopify/polaris";
 
 export function TestComponent({ QRCodes, loading }) {
-    console.log(QRCodes)
+    console.log("Result ",QRCodes)
     const rowMarkup = QRCodes.map(
       ({ _id, information, date, value }, index) => {
   

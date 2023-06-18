@@ -19,6 +19,7 @@ const getOrderList = async (req, res) => {
       financial_status:"paid",
       fields: "id,line_items,name,total_price",
     });
+    console.log("Test list")
     res.json(response)
   } catch (error) {
     res.json(error)
@@ -37,4 +38,4 @@ const getCurrency = async (req, res) => {
   }
 }
 
-export {readOrder, getOrderList}
+export {readOrder, getOrderList, getCurrency}

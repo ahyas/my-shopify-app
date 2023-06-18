@@ -4,8 +4,6 @@ const data = mongoose.model("categories", Schema({
     information:String
 }))
 
-const expense = mongoose.model("expenses")
-
 const CategoryShow = async (req, res) => {
     try {
         const result = await data.find({})

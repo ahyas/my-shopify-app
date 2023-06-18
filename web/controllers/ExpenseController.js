@@ -1,4 +1,4 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 
 const Schema = mongoose.Schema
 const data = mongoose.model("expenses", Schema({
@@ -11,7 +11,7 @@ const data = mongoose.model("expenses", Schema({
       createdAt: 'created_at', // Use `created_at` to store the created date
       updatedAt: 'updated_at' // and `updated_at` to store the last updated date
     }
-  }))
+}));
 
 const ExpenseShow = async (req, res) => {
     try {
@@ -31,8 +31,10 @@ const ExpenseShow = async (req, res) => {
                 $project:{'_id':1, 'category.information':1, 'date':1, 'id_category':1, 'information':1, 'value':1}
             }
         ])
-        const total = await data.aggregate([{$group: {_id:null, sum_val:{$sum:"$value"}}}])
-        res.json({data:result, total:total})
+        
+        const total = await data.aggregate([{$group: {_id:null, sum_val:{$sum:"$value"}}}]);
+        
+        res.json({data:result, total:total[0].sum_val});
     } catch (error) {
         res.json({msg:error})
     }   

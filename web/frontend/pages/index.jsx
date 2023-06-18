@@ -2,38 +2,114 @@ import {
   Card,
   Page,
   Layout,
-  TextContainer,
-  Image,
   Stack,
-  Link,
   Heading,
   SkeletonBodyText,
+  Button,
   Badge,
-  DisplayText,
-  TextStyle,
+  Link
 } from "@shopify/polaris";
 
-import { useAuthenticatedFetch, useNavigate, Loading } from "@shopify/app-bridge-react";
+import { Loading, useNavigate } from "@shopify/app-bridge-react";
 
-import { trophyImage } from "../assets";
-import { ProductsCard } from "../components";
-import { useAppQuery } from "../hooks";
+import { useAppQuery, useShopCurrency } from "../hooks";
 
 export default function HomePage() {
+const navigate = useNavigate();
+const currency = useShopCurrency()
 
 const {data:sales, isLoading:salesLoading} = useAppQuery({
     url:`/api/v1/order/get_paid_order`
 })
+
+const {data:total_sales} = useAppQuery({
+  url:"/api/v1/order/find"
+})
+
+const {data:expense, isLoading:expenseLoading} = useAppQuery({
+  url: "/api/v1/expense",
+});
+
+const findTotalSales = (filter) => {
+  let date = new Date()
+  let yy = date.getFullYear()
+  let mm = date.getMonth()+1
+  let dd = date.getDate()
+  let today = new Date(yy+"-"+mm+"-"+dd) 
+
+  if(filter === "TODAY"){
+    var startNewDate =today
+    var endNewDate = new Date()
+  }else if(filter === "YESTERDAY"){
+    var startNewDate = new Date(new Date().setDate(today.getDate() - 1))
+    var endNewDate = new Date(new Date().setDate(today.getDate() - 1))
+  }else if(filter === "LAST_7_DAYS"){
+    var startNewDate = new Date(new Date().setDate(today.getDate() - 7))
+    var endNewDate = new Date() 
+  }else if(filter === "LAST_30_DAYS"){
+    var startNewDate =new Date(new Date().setDate(today.getDate() - 30)) 
+    var endNewDate = new Date()
+  }else if(filter === "LAST_MONTH"){
+    var startNewDate = new Date(today.getFullYear(), today.getMonth()-1, 1)
+    var endNewDate =  new Date(new Date().setDate(0))
+  }else if(filter === "MONTH_TO_DATE"){
+    var startNewDate = new Date(today.getFullYear(), today.getMonth(), 1)
+    var endNewDate =  new Date()
+  }
+  
+  let list = []
+  let start_date = startNewDate 
+  let end_date = endNewDate 
+  
+  total_sales.data.map((row, index)=>{
+    let a = {index:index, name:row.name, total_price:row.total_price, shipping:row.total_shipping_price_set.shop_money.amount, created_at:row.created_at}
+    list.push(a)
+  })
+
+  let filtered = list.filter((obj)=>{
+    let aDate = new Date(obj.created_at)
+    return aDate.getTime() >= start_date.getTime() && aDate.getTime()<=end_date.getTime()
+  })
+ 
+ let sum = filtered.reduce((accumulator, object)=>{
+  return accumulator + parseInt(object.total_price)
+ },0)
+
+ return console.log(sum)
+
+}
+
+const getProfit = () => {
+  return sales && expense ? (
+  <Card sectioned>
+    <Stack>
+      <Stack.Item fill>
+        <Heading>Profit / Loss</Heading>
+      </Stack.Item>
+      <Stack.Item>
+        <span><b>{currency} {(sales.total_sales - expense.total).toLocaleString('en-US')}</b></span>
+      </Stack.Item>
+    </Stack>
+  </Card>
+  ) : null;
+}
 
 const getTotalSales = () => {
   return sales ? (
     <Card sectioned >
       <Stack>
         <Stack.Item fill>
-          <Heading>Total Sales</Heading>
         </Stack.Item>
         <Stack.Item>
-          <Heading>{sales.total_sales}</Heading>
+          <Link onClick={()=>navigate(`/expense`)}>Add transaction</Link>
+        </Stack.Item>
+      </Stack>
+      <Stack>
+        <Stack.Item fill>
+          <Heading>Total Income</Heading>
+        </Stack.Item>
+        <Stack.Item>
+          <Heading>{currency} {sales.total_sales.toLocaleString('en-US')}</Heading>
         </Stack.Item>
       </Stack>
       <Stack>
@@ -41,7 +117,7 @@ const getTotalSales = () => {
           <p>Paid Invoice</p>
         </Stack.Item>
         <Stack.Item>
-          <p>{sales.total_paid}</p>
+          <p>{currency} {sales.total_paid.toLocaleString('en-US')}</p>
         </Stack.Item>
       </Stack>
       <Stack>
@@ -49,11 +125,33 @@ const getTotalSales = () => {
           <p>Unpaid Invoice</p>
         </Stack.Item>
         <Stack.Item>
-          <p>{sales.total_unpaid}</p>
+          <p>{currency} {sales.total_unpaid.toLocaleString('en-US')}</p>
         </Stack.Item>
       </Stack>
     </Card>
   ) : null
+}
+
+const getTotalExpense = () => {
+  return expense ? (
+    <Card sectioned >
+      <Stack>
+        <Stack.Item fill>
+        </Stack.Item>
+        <Stack.Item>
+          <Link onClick={()=>navigate(`/expense`)}>Add transaction</Link>
+        </Stack.Item>
+      </Stack>
+      <Stack>
+        <Stack.Item fill>
+          <Heading>Total Expense</Heading>
+        </Stack.Item>
+        <Stack.Item>
+          <span><b>{currency} {expense.total.toLocaleString('en-US')}</b></span>
+        </Stack.Item>
+      </Stack>
+    </Card>
+  ) : null;
 }
 
 const loadingMarkup = salesLoading ? (
@@ -63,171 +161,113 @@ const loadingMarkup = salesLoading ? (
   </Card>
 ) : null;
 
+const loadingExpenseMarkup = expenseLoading ? (
+  <Card sectioned>
+    <Loading />
+    <SkeletonBodyText />
+  </Card>
+) : null;
+
   return (
     <Page>
       <Layout>
-        <Layout.Section>
+      <Layout.Section>
           <Card sectioned>
           <Stack>
-            <Stack.Item fill>
-              <Heading>Profit / Loss</Heading>
+            <Stack.Item>
+              <Badge status="attention">
+                <Button onClick={
+                  ()=>findTotalSales("TODAY")
+                } 
+                  size="small" 
+                  plain
+                >
+                Today
+                </Button>
+            </Badge>
             </Stack.Item>
             <Stack.Item>
-              <Badge>Paid</Badge>
+              <Badge status="attention">
+                <Button 
+                  onClick={()=>findTotalSales("YESTERDAY")} 
+                  size="small" 
+                  plain
+                >
+                  Yesterday
+                </Button>
+              </Badge>
             </Stack.Item>
             <Stack.Item>
-              <Badge>Fulfilled</Badge>
-            </Stack.Item>
-          </Stack>
-          </Card>
-        </Layout.Section>
-
-        <Layout.Section oneHalf>
-            {loadingMarkup}
-            {getTotalSales()}
-        </Layout.Section>
-
-        <Layout.Section oneHalf>
-          <Card sectioned >
-          <Stack>
-            <Stack.Item fill>
-              <Heading>Expense</Heading>
+              <Badge status="attention">
+                <Button 
+                  onClick={()=>findTotalSales("LAST_7_DAYS")} 
+                  size="small" 
+                  plain
+                >
+                  Last 7 Days
+                </Button>
+              </Badge>
             </Stack.Item>
             <Stack.Item>
-              <Badge>Paid</Badge>
+              <Badge status="attention">
+                <Button 
+                  onClick={()=>findTotalSales("MONTH_TO_DATE")} 
+                  size="small" 
+                  plain
+                >
+                  Month to date
+                </Button>
+              </Badge>
             </Stack.Item>
             <Stack.Item>
-              <Badge>Fulfilled</Badge>
-            </Stack.Item>
-          </Stack>
-          </Card>
-        </Layout.Section>
-
-        <Layout.Section oneHalf>
-          <Card sectioned >
-          <Stack>
-            <Stack.Item fill>
-              <Heading>Payments</Heading>
+              <Badge status="attention">
+                <Button 
+                  onClick={()=>findTotalSales("LAST_30_DAYS")} 
+                  size="small" 
+                  plain
+                >
+                  Last 30 Days
+                </Button>
+              </Badge>
             </Stack.Item>
             <Stack.Item>
-              <Badge>Paid</Badge>
+              <Badge status="attention">
+                <Button 
+                  onClick={()=>findTotalSales("LAST_MONTH")} 
+                  size="small" 
+                  plain
+                >
+                  Last Month
+                </Button>
+              </Badge>
             </Stack.Item>
             <Stack.Item>
-              <Badge>Fulfilled</Badge>
-            </Stack.Item>
-          </Stack>
-          </Card>
-        </Layout.Section>
-
-        <Layout.Section oneHalf>
-          <Card sectioned >
-          <Stack>
-            <Stack.Item fill>
-              <Heading>Acc. Receivable / Payable</Heading>
-            </Stack.Item>
-            <Stack.Item>
-              <Badge>Paid</Badge>
-            </Stack.Item>
-            <Stack.Item>
-              <Badge>Fulfilled</Badge>
-            </Stack.Item>
-          </Stack>
-          </Card>
-        </Layout.Section>
-
-        <Layout.Section oneHalf>
-          <Card sectioned >
-          <Stack>
-            <Stack.Item fill>
-              <Heading>Purchase</Heading>
-            </Stack.Item>
-            <Stack.Item>
-              <Badge>Paid</Badge>
-            </Stack.Item>
-            <Stack.Item>
-              <Badge>Fulfilled</Badge>
-            </Stack.Item>
-          </Stack>
-          </Card>
-        </Layout.Section>
-        
-        <Layout.Section oneHalf>
-          <Card sectioned >
-          <Stack>
-            <Stack.Item fill>
-              <Heading>Cash/Bank Fund Transfer</Heading>
-            </Stack.Item>
-            <Stack.Item>
-              <Badge>Paid</Badge>
-            </Stack.Item>
-            <Stack.Item>
-              <Badge>Fulfilled</Badge>
+              <Badge status="attention">
+                <Button 
+                  onClick={()=>findTotalSales("ALL")} 
+                  size="small" 
+                  plain
+                >
+                  All
+                </Button>
+              </Badge>
             </Stack.Item>
           </Stack>
           </Card>
         </Layout.Section>
 
         <Layout.Section>
-          <Card sectioned>
-            <Stack
-              wrap={false}
-              spacing="extraTight"
-              distribution="trailing"
-              alignment="center"
-            >
-              <Stack.Item fill>
-                <TextContainer spacing="loose">
-                  <Heading>Nice work on building a Shopify app 🎉</Heading>
-                  <p>
-                    Your app is ready to explore! It contains everything you
-                    need to get started including the{" "}
-                    <Link url="https://polaris.shopify.com/" external>
-                      Polaris design system
-                    </Link>
-                    ,{" "}
-                    <Link url="https://shopify.dev/api/admin-graphql" external>
-                      Shopify Admin API
-                    </Link>
-                    , and{" "}
-                    <Link
-                      url="https://shopify.dev/apps/tools/app-bridge"
-                      external
-                    >
-                      App Bridge
-                    </Link>{" "}
-                    UI library and components.
-                  </p>
-                  
-                  <p>
-                    Ready to go? Start populating your app with some sample
-                    products to view and test in your store.{" "}
-                  </p>
-                  <p>
-                    Learn more about building out your app in{" "}
-                    <Link
-                      url="https://shopify.dev/apps/getting-started/add-functionality"
-                      external
-                    >
-                      this Shopify tutorial
-                    </Link>{" "}
-                    📚{" "}
-                  </p>
-                </TextContainer>
-              </Stack.Item>
-              <Stack.Item>
-                <div style={{ padding: "0 20px" }}>
-                  <Image
-                    source={trophyImage}
-                    alt="Nice work on building a Shopify app"
-                    width={120}
-                  />
-                </div>
-              </Stack.Item>
-            </Stack>
-          </Card>
+          {getProfit()}
         </Layout.Section>
-        <Layout.Section>
-          <ProductsCard />
+
+        <Layout.Section oneHalf>
+          {loadingMarkup}
+          {getTotalSales()}
+        </Layout.Section>
+
+        <Layout.Section oneHalf>
+          {loadingExpenseMarkup}
+          {getTotalExpense()}
         </Layout.Section>
       </Layout>
     </Page>

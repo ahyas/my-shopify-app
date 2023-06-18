@@ -6,12 +6,12 @@ import serveStatic from "serve-static";
 
 import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
-import {readOrder, getOrderList} from "./ReadOrder.js";
+import {readOrder, getOrderList, getCurrency} from "./ReadOrder.js";
 import {ShowOrder, SaveOrder, EditOrder, UpdateOrder, DetailOrder, DeleteOrder} from "./controllers/OrderController.js";
 import { ExpenseShow, ExpenseSave, ExpenseView, ExpenseUpdate, ExpenseDelete } from "./controllers/ExpenseController.js"; 
 import {CategoryShow, CategorySave, CategoryView, DeleteCategory, UpdateCategory} from "./controllers/CategoryController.js"
 
-import {getTotalSales} from "./controllers/SalesController.js"
+import {getTotalSales, getListOfOrder} from "./controllers/SalesController.js"
 
 import connectDB from "./ConnectDB.js";
 import "dotenv/config.js"
@@ -68,6 +68,7 @@ app.get("/api/products/create", async (_req, res) => {
 
 app.get("/api/test_api", readOrder)
 app.get("/api/test_api/list_order", getOrderList)
+app.get("/api/test_api/get_currency", getCurrency)
 
 app.get("/api/orders", ShowOrder)
 app.post("/api/orders/save", SaveOrder)
@@ -89,7 +90,7 @@ app.delete("/api/v1/category/:id/delete", DeleteCategory)
 app.patch("/api/v1/category/:id/update", UpdateCategory)
 
 app.get("/api/v1/order/get_paid_order", getTotalSales)
-
+app.get("/api/v1/order/find", getListOfOrder)
 //Shop info (Currency, number format, shop name etc)
 
 app.use(shopify.cspHeaders());

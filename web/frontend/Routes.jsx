@@ -56,6 +56,7 @@ export default function Routes({ pages }) {
       <Route path="/expense/category/:id_category/edit" element={<CategoryEdit/>} />
       <Route path="/expense/:id/category/:id_category/view" element={<CategoryView/>} />
       <Route path="/expense/:id/category/:id_category/edit" element={<CategoryEdit/>} />
+
     </ReactRouterRoutes>
   );
 }

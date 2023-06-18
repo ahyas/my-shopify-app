@@ -10,11 +10,7 @@ export function ExpenseList({expense, total, loading}){
     const currency = useShopCurrency()
    
     const showTotal = () =>{ 
-        if(total.length > 0){
-            return (<p><b>{currency} {total[0].sum_val}</b></p>)
-        }else{
-            return (null)
-        }
+        return (<p><b>{currency} {total}</b></p>)
     }
     const rowMarkup = expense.map(
         ({ _id, information, category, date, value }, index) => {
